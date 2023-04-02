@@ -1,6 +1,6 @@
 from pathlib import Path
 from imageLoader import ImageLoader
-from imageMerger import mergeImages, mergeRandomImagesInFolder
+from imageMerger import mergeImages, mergeRandomImagesInFolder, pickImages
 from wpChanger import setImageAsWallpaper
 
 
@@ -11,8 +11,9 @@ class Changer:
         self.currentImages = []
 
     def fullImageChange(self, numOfScreens):
-        # self.currentImages = self.loader.downloadImages(numOfScreens)
-        self.__mergeAndSet(numOfScreens)
+        self.currentImages = self.loader.downloadImages(numOfScreens)
+        # self.currentImages = pickImages(self.loader.baseFolder, numOfScreens)
+        self.__mergeAndSetGivenImages()
 
     def changeOne(self, index):
         if index >= len(self.currentImages) or index < 0:
@@ -20,9 +21,13 @@ class Changer:
             return
         newImage = self.loader.downloadImage()
         self.currentImages[index] = newImage
-        self.__mergeAndSet()
+        self.__mergeAndSetGivenImages()
 
-    def __mergeAndSet(self, numOfScreens):
-        # mergedImage = mergeImages(self.wpFolder, self.currentImages)
-        mergedImage = mergeRandomImagesInFolder(self.wpFolder, self.loader.baseFolder, numOfScreens)
+
+    # def __mergeAndSetRandomImages(self, numOfScreens):
+    #     mergedImage = mergeRandomImagesInFolder(self.wpFolder, self.loader.baseFolder, numOfScreens)
+    #     setImageAsWallpaper(mergedImage)
+
+    def __mergeAndSetGivenImages(self):
+        mergedImage = mergeImages(self.wpFolder, self.currentImages)
         setImageAsWallpaper(mergedImage)

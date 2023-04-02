@@ -4,6 +4,7 @@ from threading import Thread
 from pystray._util import win32
 from ctypes import wintypes
 import ctypes
+from pathlib import Path
 
 
 ##### TRAY TEST SHIT
@@ -21,12 +22,12 @@ def create_image(width, height, color1, color2):
 ####
 
 class Tray:  #(Thread)
-    def __init__(self, onOpen, onClose):
+    def __init__(self,icon:Path, onOpen, onLoadAll, onClose):
         # super().__init__(None, None, None, None, None, daemon=None)
-        menuItems = [MenuItem("Open", onOpen), MenuItem("Close", onClose)]
+        menuItems = [MenuItem("Open", onOpen),MenuItem("Change all", onLoadAll), MenuItem("Close", onClose)]
         self.icon = CustomIcon(
             'wct',
-            icon=create_image(64, 64, 'black', 'white'), 
+            icon=Image.open(icon), 
             menu=menuItems,
             onDoubleClick=onOpen
         )

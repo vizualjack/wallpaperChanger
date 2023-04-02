@@ -8,7 +8,7 @@ def mergeRandomImagesInFolder(savePath, imagesPath, numOfImages) -> Path:
     path = imagesPath
     if not isinstance(path, Path):
         path = Path(imagesPath)    
-    images = __pickImages(path, numOfImages)
+    images = pickImages(path, numOfImages)
     if len(images) < numOfImages:
         print("There are not enough images")
     return mergeImages(savePath, images)
@@ -29,10 +29,11 @@ def mergeImages(savePath, images: list[Path]):
     return mergedImagePath
 
 
-def __pickImages(imageFolder: Path, numOfImages) -> list[Path]:
+def pickImages(imageFolder: Path, numOfImages) -> list[Path]:
     allImages = []
     for i in imageFolder.iterdir():
-        allImages.append(i)
+        if i.is_file():
+            allImages.append(i)
     images = []
     for i in range(numOfImages):
         if len(allImages) == 0:
