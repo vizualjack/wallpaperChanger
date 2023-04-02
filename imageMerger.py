@@ -11,7 +11,7 @@ def mergeRandomImagesInFolder(savePath, imagesPath, numOfImages) -> Path:
     images = __pickImages(path, numOfImages)
     if len(images) < numOfImages:
         print("There are not enough images")
-    mergeImages(savePath, images)
+    return mergeImages(savePath, images)
 
 
 def mergeImages(savePath, images: list[Path]):
