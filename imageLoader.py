@@ -75,7 +75,7 @@ class ImageLoader:
     def addToBlackList(self, image:Path):
         parent1 = self.blackListFolder.parent
         parent2 = image.parent
-        if parent1.absolute().__str__() != parent2.absolute.__str__():
+        if parent1.absolute().__str__() != parent2.absolute().__str__():
             print("Image is outside of my image folder")
         else:
             image.replace(self.blackListFolder.joinpath(image.name))

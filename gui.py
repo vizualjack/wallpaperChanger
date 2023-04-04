@@ -7,7 +7,7 @@ from functools import partial
 IMAGE_WIDTH = 300
 
 class ChangeGui:
-    def __init__(self, icon:Path, onLoadOne, onLoadAll, onClose, onChangeInterval) -> None:
+    def __init__(self, icon:Path,screens, onLoadOne, onLoadAll, onClose, onChangeInterval) -> None:
         self.root = Tk()
         self.icon = PhotoImage(file=icon.absolute().__str__())
         self.root.iconphoto(False, self.icon)
@@ -20,10 +20,25 @@ class ChangeGui:
         self.frm.grid()
         self.shownImages = []
         self.currentImages = []
+        self.currentImageLabels = []
         self.onLoadOne = onLoadOne
         self.onLoadAll = onLoadAll
         self.changeIntervalVal = StringVar()
         self.settingsWindow = None
+        self.screens = screens
+        ## INIT WINDOW
+        allLoader = Frame(self.frm)
+        allLoader.grid(column=1,row=0)
+        allLoader.grid()
+        Button(allLoader, text="Load all new", command=partial(self.onLoadAll, False)).grid(column=0,row=0)
+        Button(allLoader, text="All to blacklist", command=partial(self.onLoadAll, True)).grid(column=1,row=0)
+        Button(self.frm, text="Settings", command=self.openSettings).grid(column=2,row=0)
+        for i in range(self.screens):
+            imageBtns = Frame(self.frm)
+            imageBtns.grid(column=i,row=2)
+            imageBtns.grid()
+            Button(imageBtns, text="New one", command=partial(self.onLoadOne, i, False)).grid(column=0,row=0)
+            Button(imageBtns, text="To blacklist", command=partial(self.onLoadOne, i, True)).grid(column=1,row=0)
 
     def show(self):
         self.root.mainloop()
@@ -58,13 +73,15 @@ class ChangeGui:
             print("Fail to convert interval value")
 
     def loadImages(self, images: list[Path]):
+        if len(images) != self.screens:
+            print("list of images not match with number of screens")
+        # CLEAR CUR IMAGES
         if len(self.currentImages) > 0:
-            for key in self.frm.children.copy().keys():
-                self.frm.children.get(key).destroy()                
+            for curLabel in self.currentImageLabels:
+                curLabel.destroy()
             self.currentImages.clear()
+            self.currentImageLabels.clear()
         self.shownImages = images
-        Button(self.frm, text="Load all new", command=self.onLoadAll).grid(column=1,row=0)
-        Button(self.frm, text="Settings", command=self.openSettings).grid(column=2,row=0)
         index = 0
         for imgPath in self.shownImages:
             img = Image.open(imgPath)
@@ -74,9 +91,9 @@ class ChangeGui:
             pi = ImageTk.PhotoImage(resized)
             imageLabel = Label(self.frm, image=pi)
             imageLabel.grid(column=index,row=1)
-            Button(self.frm, text="Load new", command=partial(self.onLoadOne, index)).grid(column=index,row=2)
             index += 1
             self.currentImages.append(pi)
+            self.currentImageLabels.append(imageLabel)
 
     def close(self):        
         if self.onClose:

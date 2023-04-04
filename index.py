@@ -14,22 +14,22 @@ from settings import Settings
 ##### SETTINGS
 MONITOR_SIZE = "1920x1080"
 NUM_OF_SCREENS = 3
-IMAGES_FOLDER = Path("images")
-WP_FOLDER = Path("wps")
+IMAGES_FOLDER_PATH = Path("images")
+WP_PATH = Path("wp")
 #####
 
 
 #####
 KEY_CHANGEINTERVAL = "changeIntervalSecs"
 #####
-def loadAll():
+def loadAll(curToBlackList=False):
     global lastChangeTime
     lastChangeTime = time.time()
-    myChanger.fullImageChange(NUM_OF_SCREENS)
+    myChanger.fullImageChange(NUM_OF_SCREENS, curToBlackList)
     refreshGui()
 
-def loadNew(index):
-    myChanger.changeOne(index)
+def loadNew(index, curToBlackList=False):
+    myChanger.changeOne(index, curToBlackList)
     refreshGui()
 
 def refreshGui():
@@ -60,7 +60,7 @@ def close():
 def openGui():
     global cg, icon
     if not cg:
-        cg = ChangeGui(icon, loadNew, loadAll, onGuiClosed, onChangeInterval)
+        cg = ChangeGui(icon, NUM_OF_SCREENS, loadNew, loadAll, onGuiClosed, onChangeInterval)
     cg.loadImages(myChanger.currentImages)
     cg.show()
 
@@ -68,7 +68,7 @@ icon = Path("icon/icon.png")
 closing = False
 lastChangeTime = 0
 trayIcon:Tray = None
-myChanger = Changer(IMAGES_FOLDER, WP_FOLDER)
+myChanger = Changer(IMAGES_FOLDER_PATH, WP_PATH)
 cg:ChangeGui = None
 settings = Settings(Path("."))
 secs_changeInterval = settings.getData(KEY_CHANGEINTERVAL)

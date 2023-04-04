@@ -18,13 +18,11 @@ def mergeImages(savePath, images: list[Path]):
     path = savePath
     if not isinstance(path, Path):
         path = Path(path)
-    if not path.exists():
-        path.mkdir()
     mergedImage = Image.new("RGB", (1920*len(images),1080))
     for i in range(len(images)):
         image = images[i]
         mergedImage.paste(Image.open(image.absolute().__str__()), [1920*i,0])
-    mergedImagePath = path.joinpath(f"{uuid4().__str__()}.jpg")
+    mergedImagePath = Path(path.__str__() + ".jpg") #path.joinpath(f"{uuid4().__str__()}")
     mergedImage.save(mergedImagePath)
     return mergedImagePath
 
