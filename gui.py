@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from pathlib import Path
 from PIL import Image, ImageTk
 from functools import partial
+from typing import List
 
 IMAGE_WIDTH = 300
 
@@ -72,7 +73,7 @@ class ChangeGui:
         except:
             print("Fail to convert interval value")
 
-    def loadImages(self, images: list[Path]):
+    def loadImages(self, images: List[Path]):
         if len(images) != self.screens:
             print("list of images not match with number of screens")
         # CLEAR CUR IMAGES
