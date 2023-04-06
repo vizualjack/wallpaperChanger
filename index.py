@@ -4,25 +4,20 @@
 from pathlib import Path
 import time
 from changer import Changer
-import tkinter
-from gui import ChangeGui
+from gui import GUI
 from tray import Tray
-from settings import Settings
+from userSettings import UserSettings
 from screenSize import ScreenSize
 
 
 
-##### SETTINGS
+##### APP SETTINGS
 MONITOR_SIZE = ScreenSize(1920,1080)
 NUM_OF_SCREENS = 3
-IMAGES_FOLDER_PATH = Path("images")
-WP_PATH = Path("wp")
+BASE_FOLDER = Path()
 #####
 
 
-#####
-KEY_CHANGEINTERVAL = "changeIntervalSecs"
-#####
 def loadAll(curToBlackList=False):
     global lastChangeTime
     lastChangeTime = time.time()
@@ -42,12 +37,6 @@ def onGuiClosed():
     global cg
     cg = None
 
-def onChangeInterval(newIntervalInSeconds):
-    global secs_changeInterval
-    secs_changeInterval = newIntervalInSeconds
-    settings.setData(KEY_CHANGEINTERVAL, secs_changeInterval)
-    settings.save()
-
 def close():
     print("Closing...")
     global closing, trayIcon, cg
@@ -59,26 +48,28 @@ def close():
     closing = True
 
 def openGui():
-    global cg, icon
+    global cg, icon, userSettings
     if not cg:
-        cg = ChangeGui(icon, NUM_OF_SCREENS, loadNew, loadAll, onGuiClosed, onChangeInterval)
-    cg.loadImages(myChanger.currentImages)
+        cg = GUI(icon, userSettings, loadNew, loadAll, onGuiClosed)
+    if not cg.needSettings:
+        cg.loadImages(myChanger.currentImages)
     cg.show()
 
 icon = Path("icon/icon.png")
 closing = False
 lastChangeTime = 0
 trayIcon:Tray = None
-myChanger = Changer(IMAGES_FOLDER_PATH, WP_PATH)
-cg:ChangeGui = None
-settings = Settings(Path("."))
-secs_changeInterval = settings.getData(KEY_CHANGEINTERVAL)
-if not secs_changeInterval:
-    onChangeInterval(60*60)
-    print("Set default interval")
+myChanger = Changer(BASE_FOLDER, MONITOR_SIZE)
+cg:GUI = None
+userSettings = UserSettings(BASE_FOLDER)
 
-def main():
-    global trayIcon, lastChangeTime, closing
+def mainFrame():
+    global trayIcon, lastChangeTime, closing, userSettings, cg
+    if not userSettings.getChangeInterval():
+        openGui()
+    if not userSettings.getChangeInterval():
+        print("No user settings,  can't initialize!")
+        return
     # CREATE TRAY ICON
     trayIcon = Tray(icon, openGui, loadAll, close)
     trayIcon.start()
@@ -90,4 +81,4 @@ def main():
         time.sleep(1)
     print("Closed")
 
-main()
+mainFrame()

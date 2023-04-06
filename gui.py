@@ -1,41 +1,56 @@
 from tkinter import *
 from tkinter.ttk import *
 from pathlib import Path
-from PIL import Image, ImageTk
+from PIL import Image
 from functools import partial
 from typing import List
+from userSettings import UserSettings
+
 
 IMAGE_WIDTH = 300
 
-class ChangeGui:
-    def __init__(self, icon:Path,screens, onLoadOne, onLoadAll, onClose, onChangeInterval) -> None:
+class GUI:
+    def __init__(self, icon:Path, userSettings:UserSettings, onLoadOne, onLoadAll, onClose) -> None:
         self.root = Tk()
         self.icon = PhotoImage(file=icon.absolute().__str__())
         self.root.iconphoto(False, self.icon)
         self.root.title("Wallpaper Changer")
         self.root.protocol("WM_DELETE_WINDOW", self.close)
         self.root.wm_resizable(False, False)
+        self.root.eval('tk::PlaceWindow . center')
         self.onClose = onClose
-        self.onChangeInterval = onChangeInterval
-        self.frm = Frame(self.root)
-        self.frm.grid()
+        self.mainFrame = Frame(self.root)
+        self.mainFrame.grid()
         self.shownImages = []
         self.currentImages = []
         self.currentImageLabels = []
         self.onLoadOne = onLoadOne
         self.onLoadAll = onLoadAll
         self.changeIntervalVal = StringVar()
+        self.monitorWidthVal = StringVar()
+        self.monitorHeightVal = StringVar()
+        self.numOfScreensVal = StringVar()
         self.settingsWindow = None
-        self.screens = screens
-        ## INIT WINDOW
-        allLoader = Frame(self.frm)
+        self.userSettings = userSettings
+        self.needSettings = False
+        self.initLabel = Label(self.mainFrame, text="Wait for settings...")
+        self.initLabel.grid(row=0,column=0)
+        if not self.userSettings.getChangeInterval():
+            self.needSettings = True
+            self.openSettings()
+        else:
+            self.__initMainWindow()
+
+    def __initMainWindow(self):
+        self.initLabel.destroy()
+        allLoader = Frame(self.mainFrame)
         allLoader.grid(column=1,row=0)
         allLoader.grid()
         Button(allLoader, text="Load all new", command=partial(self.onLoadAll, False)).grid(column=0,row=0)
         Button(allLoader, text="All to blacklist", command=partial(self.onLoadAll, True)).grid(column=1,row=0)
-        Button(self.frm, text="Settings", command=self.openSettings).grid(column=2,row=0)
-        for i in range(self.screens):
-            imageBtns = Frame(self.frm)
+        Button(self.mainFrame, text="Settings", command=self.openSettings).grid(column=2,row=0)
+        for i in range(self.userSettings.getNumOfScreens()):
+            imageBtns = Frame(self.mainFrame)
             imageBtns.grid(column=i,row=2)
             imageBtns.grid()
             Button(imageBtns, text="New one", command=partial(self.onLoadOne, i, False)).grid(column=0,row=0)
@@ -48,6 +63,11 @@ class ChangeGui:
         if self.settingsWindow:
             self.settingsWindow.destroy()
             self.settingsWindow = None
+        if self.needSettings:
+            if self.userSettings.getChangeInterval():
+                self.__initMainWindow()
+                self.needSettings = False
+            self.close()
 
     def openSettings(self):
         if self.settingsWindow:
@@ -57,24 +77,47 @@ class ChangeGui:
         self.settingsWindow.title("Settings")
         self.settingsWindow.protocol("WM_DELETE_WINDOW", self.closeSettings)
         self.settingsWindow.resizable(False, False)
+        self.root.eval(f'tk::PlaceWindow {str(self.settingsWindow)} center')
         self.settingsWindow.grid()
-        self.changeIntervalVal.set("")
-        Label(self.settingsWindow, text="Setting").grid(row=0,column=1)
+        self.changeIntervalVal.set(self.__getSettingsValue(self.userSettings.getChangeInterval()))
+        self.monitorWidthVal.set(self.__getSettingsValue(self.userSettings.getMonitorWidth()))
+        self.monitorHeightVal.set(self.__getSettingsValue(self.userSettings.getMonitorHeight()))
+        self.numOfScreensVal.set(self.__getSettingsValue(self.userSettings.getNumOfScreens()))
+        ## CHANGE INTERVAL
         Label(self.settingsWindow, text="Change interval(secs)").grid(row=0,column=0)
         Entry(self.settingsWindow, textvariable=self.changeIntervalVal).grid(row=0, column=1)
-        Button(self.settingsWindow, text="Save", command=self.saveSettings).grid(row=1, column=1)
+        ## WIDTH
+        Label(self.settingsWindow, text="Monitor width(px)").grid(row=1,column=0)
+        Entry(self.settingsWindow, textvariable=self.monitorWidthVal).grid(row=1, column=1)
+        ## HEIGHT
+        Label(self.settingsWindow, text="Monitor height(px)").grid(row=2,column=0)
+        Entry(self.settingsWindow, textvariable=self.monitorHeightVal).grid(row=2, column=1)
+        ## NUM OF SCREENS
+        Label(self.settingsWindow, text="Number of screens").grid(row=3,column=0)
+        Entry(self.settingsWindow, textvariable=self.numOfScreensVal).grid(row=3, column=1)
+        ####
+        Button(self.settingsWindow, text="Save", command=self.saveSettings).grid(row=4, column=1)
+        self.settingsWindow.lift(self.root)
+    
+    def __getSettingsValue(self, settingsVal):
+        if not settingsVal:
+            return ""
+        return settingsVal
+
 
     def saveSettings(self):
         try:
-            intVal = int(self.changeIntervalVal.get())
-            if intVal > 0:
-                self.onChangeInterval(intVal)
-            self.closeSettings()
+            self.userSettings.setChangeInterval(int(self.changeIntervalVal.get()))
+            self.userSettings.setMonitorWidth(int(self.monitorWidthVal.get()))
+            self.userSettings.setMonitorHeight(int(self.monitorHeightVal.get()))
+            self.userSettings.setNumOfScreens(int(self.numOfScreensVal.get()))
+            self.userSettings.save()
         except:
-            print("Fail to convert interval value")
+            print("Fail to save settings, check ur input")
+        self.closeSettings()
 
     def loadImages(self, images: List[Path]):
-        if len(images) != self.screens:
+        if len(images) != self.userSettings.getNumOfScreens():
             print("list of images not match with number of screens")
         # CLEAR CUR IMAGES
         if len(self.currentImages) > 0:
@@ -89,8 +132,8 @@ class ChangeGui:
             scalingFactor = img.size[1] / img.size[0]
             height = int(scalingFactor * IMAGE_WIDTH)
             resized = img.resize((IMAGE_WIDTH, height), Image.LANCZOS)
-            pi = ImageTk.PhotoImage(resized)
-            imageLabel = Label(self.frm, image=pi)
+            pi = PhotoImage(resized)
+            imageLabel = Label(self.mainFrame, image=pi)
             imageLabel.grid(column=index,row=1)
             index += 1
             self.currentImages.append(pi)

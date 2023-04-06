@@ -12,10 +12,11 @@ from screenSize import ScreenSize
 WALLPAPER_CATALOG_PAGE = "https://wallpaperscraft.com/catalog/anime/"
 DOMAIN = WALLPAPER_CATALOG_PAGE.split("/catalog")[0]
 BLACKLIST_FOLDER_NAME = "blackList"
+IMAGES_FOLDER_NAME = "images"
 
 
-class ImageLoader:
-    class Position:
+class ImageTank:
+    class LoadPosition:
         _POSITION_SAVE_NAME = "loaderPos.json"
         _KEY_PAGE = "page"
         _KEY_IMAGE_INDEX = "imageIndex"
@@ -59,15 +60,35 @@ class ImageLoader:
 
     def __init__(self, baseFolder:Path, screenSize: ScreenSize) -> None:
         self.baseFolder = baseFolder
-        self.blackListFolder = baseFolder.joinpath(BLACKLIST_FOLDER_NAME)
-        self.position = self.Position(baseFolder)
+        self.imagesFolder = baseFolder.joinpath(IMAGES_FOLDER_NAME)
+        self.blackListFolder = self.imagesFolder.joinpath(BLACKLIST_FOLDER_NAME)
+        self.position = self.LoadPosition(baseFolder)
         self.screenSizeStr = f"{screenSize.width}x{screenSize.height}"
         self.wallpaperPage = f"{WALLPAPER_CATALOG_PAGE}{self.screenSizeStr}"
         ### CREATE FOLDER IF NOT EXIST
-        if not self.baseFolder.exists():
-            self.baseFolder.mkdir()
+        if not self.imagesFolder.exists():
+            self.imagesFolder.mkdir()
         if not self.blackListFolder.exists():
             self.blackListFolder.mkdir()
+
+    def getImages(self, numOfImages):
+        imagePaths = self.downloadImages(numOfImages)
+        neededRest = numOfImages - len(imagePaths)
+        if neededRest > 0:
+            self.currentImages.extend(self.getRandomImages(neededRest))
+
+    def getRandomImages(self, numOfImages) -> List[Path]:
+        allImages = []
+        for i in self.imagesFolder.iterdir():
+            if i.is_file():
+                allImages.append(i)
+        images = []
+        for i in range(numOfImages):
+            if len(allImages) == 0:
+                break
+            pickIndex = randint(0,len(allImages)-1)
+            images.append(allImages.pop(pickIndex))
+        return images
         
     def downloadImages(self, numOfImage) -> List[Path]:
         images = []
@@ -93,7 +114,16 @@ class ImageLoader:
         if not fullImageName:
             return None
         fullImagePath = self.__downloadImageByFullName(fullImageName)
+        self.position.save()
         return fullImagePath
+    
+    def addToBlackList(self, image:Path):
+        parent1 = self.blackListFolder.parent
+        parent2 = image.parent
+        if parent1.absolute().__str__() != parent2.absolute().__str__():
+            print("Image is outside of my image folder")
+        else:
+            image.replace(self.blackListFolder.joinpath(image.name))
     
     def __downloadImageByFullName(self,fullImageName):
         downloadLink = f"https://images.wallpaperscraft.com/image/single/{fullImageName}"
@@ -101,7 +131,7 @@ class ImageLoader:
         if not response:
             print("__downloadImageByFullName: No or error response")
             return None
-        fullImagePath = self.baseFolder.joinpath(fullImageName)
+        fullImagePath = self.imagesFolder.joinpath(fullImageName)
         try:
             f = open(fullImagePath.__str__(), "wb")
             f.write(response.content)
@@ -121,10 +151,11 @@ class ImageLoader:
                 return None
             imageName = imagesNames[imageIndex]
             fullImageName = f"{imageName}_{self.screenSizeStr}.jpg"
+            self.position.nextIndex()
             if self.__checkBlackList(fullImageName) or self.__checkImageFolder(fullImageName):
                 print("Image already exists")
                 fullImageName = None
-                self.position.nextIndex()
+        return fullImageName
     
     def __getPageLink(self):
         lastPage = self.__getLastPage()
@@ -134,14 +165,6 @@ class ImageLoader:
         if page > lastPage:
             return None
         return f"{self.wallpaperPage}/page{page}"
-
-    def addToBlackList(self, image:Path):
-        parent1 = self.blackListFolder.parent
-        parent2 = image.parent
-        if parent1.absolute().__str__() != parent2.absolute().__str__():
-            print("Image is outside of my image folder")
-        else:
-            image.replace(self.blackListFolder.joinpath(image.name))
 
     def __loadImageNamesFromLink(self, searchPage):
         response = requests.get(searchPage)
@@ -159,7 +182,7 @@ class ImageLoader:
         self.__checkFolderForItem(self.blackListFolder, fullImageName)
     
     def __checkImageFolder(self, fullImageName):
-        self.__checkFolderForItem(self.baseFolder, fullImageName)    
+        self.__checkFolderForItem(self.imagesFolder, fullImageName)    
 
     def __checkFolderForItem(self, folder:Path, fullItemName):
         for file in folder.iterdir():
