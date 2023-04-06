@@ -12,8 +12,6 @@ from screenSize import ScreenSize
 
 
 ##### APP SETTINGS
-MONITOR_SIZE = ScreenSize(1920,1080)
-NUM_OF_SCREENS = 3
 BASE_FOLDER = Path()
 #####
 
@@ -21,7 +19,7 @@ BASE_FOLDER = Path()
 def loadAll(curToBlackList=False):
     global lastChangeTime
     lastChangeTime = time.time()
-    myChanger.fullImageChange(NUM_OF_SCREENS, curToBlackList)
+    myChanger.fullImageChange(userSettings.getNumOfScreens(), curToBlackList)
     refreshGui()
 
 def loadNew(index, curToBlackList=False):
@@ -59,17 +57,19 @@ icon = Path("icon/icon.png")
 closing = False
 lastChangeTime = 0
 trayIcon:Tray = None
-myChanger = Changer(BASE_FOLDER, MONITOR_SIZE)
 cg:GUI = None
 userSettings = UserSettings(BASE_FOLDER)
+myChanger:Changer = None
 
 def main():
-    global trayIcon, lastChangeTime, closing, userSettings, cg
+    global trayIcon, lastChangeTime, closing, userSettings, cg, myChanger
     if not userSettings.getChangeInterval():
         openGui()
     if not userSettings.getChangeInterval():
         print("No user settings, can't initialize!")
         return
+    # Changer init
+    myChanger = Changer(BASE_FOLDER, userSettings.getMonitorSize())
     # CREATE TRAY ICON
     trayIcon = Tray(icon, openGui, loadAll, close)
     trayIcon.start()

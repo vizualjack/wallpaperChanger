@@ -1,5 +1,6 @@
 from settings import Settings
 from pathlib import Path
+from screenSize import ScreenSize
 
 ### KEYS
 WIDTH = "winWidth"
@@ -10,6 +11,9 @@ CHANGE_INTERVAL = "changeIntervalSecs"
 class UserSettings(Settings):
     def __init__(self, baseFolder: Path) -> None:
         super().__init__(baseFolder)
+
+    def getMonitorSize(self):
+        return ScreenSize(self.getMonitorWidth(), self.getMonitorHeight())
 
     def getMonitorWidth(self):
         return self.getData(WIDTH)

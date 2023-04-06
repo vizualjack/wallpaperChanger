@@ -91,8 +91,8 @@ class GUI:
 
     def saveSettings(self):
         try:
-            print(self.root.winfo_width())
-            print(self.root.winfo_height())
+            # print(self.root.winfo_width())
+            # print(self.root.winfo_height())
             self.userSettings.setChangeInterval(int(self.changeIntervalVal.get()))
             self.userSettings.setMonitorWidth(int(self.monitorWidthVal.get()))
             self.userSettings.setMonitorHeight(int(self.monitorHeightVal.get()))
