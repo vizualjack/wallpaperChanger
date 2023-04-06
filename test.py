@@ -1,12 +1,9 @@
 from imageTank import ImageTank
 from screenSize import ScreenSize
 from pathlib import Path
+from tkinter import Tk
 
-##### SETTINGS
-MONITOR_SIZE = ScreenSize(1920,1080)
-NUM_OF_SCREENS = 3
-BASE_FOLDER = Path()
-#####
-
-imageTank = ImageTank(BASE_FOLDER, MONITOR_SIZE)
-imageTank.downloadImages(NUM_OF_SCREENS)
+root = Tk()
+root.resizable(False, False)
+root.geometry("500x300+300+300")
+root.mainloop()

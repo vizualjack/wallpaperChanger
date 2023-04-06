@@ -75,7 +75,9 @@ class ImageTank:
         imagePaths = self.downloadImages(numOfImages)
         neededRest = numOfImages - len(imagePaths)
         if neededRest > 0:
-            self.currentImages.extend(self.getRandomImages(neededRest))
+            imagePaths.extend(self.getRandomImages(neededRest))
+        return imagePaths        
+        # return self.getRandomImages(numOfImages)
 
     def getRandomImages(self, numOfImages) -> List[Path]:
         allImages = []

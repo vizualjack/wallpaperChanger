@@ -63,12 +63,12 @@ myChanger = Changer(BASE_FOLDER, MONITOR_SIZE)
 cg:GUI = None
 userSettings = UserSettings(BASE_FOLDER)
 
-def mainFrame():
+def main():
     global trayIcon, lastChangeTime, closing, userSettings, cg
     if not userSettings.getChangeInterval():
         openGui()
     if not userSettings.getChangeInterval():
-        print("No user settings,  can't initialize!")
+        print("No user settings, can't initialize!")
         return
     # CREATE TRAY ICON
     trayIcon = Tray(icon, openGui, loadAll, close)
@@ -76,9 +76,9 @@ def mainFrame():
     # MAIN CHECK LOOP
     print("Go into main check loop")
     while not closing:
-        if time.time() >= lastChangeTime + secs_changeInterval:
+        if time.time() >= lastChangeTime + userSettings.getChangeInterval():
             loadAll()
         time.sleep(1)
     print("Closed")
 
-mainFrame()
+main()
