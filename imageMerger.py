@@ -2,6 +2,7 @@ from PIL import Image
 from pathlib import Path
 from random import randint
 from uuid import uuid4
+from typing import List
 
 
 def mergeRandomImagesInFolder(savePath, imagesPath, numOfImages) -> Path:
@@ -14,7 +15,7 @@ def mergeRandomImagesInFolder(savePath, imagesPath, numOfImages) -> Path:
     return mergeImages(savePath, images)
 
 
-def mergeImages(savePath, images: list[Path]):
+def mergeImages(savePath, images: List[Path]):
     path = savePath
     if not isinstance(path, Path):
         path = Path(path)
@@ -27,7 +28,7 @@ def mergeImages(savePath, images: list[Path]):
     return mergedImagePath
 
 
-def pickImages(imageFolder: Path, numOfImages) -> list[Path]:
+def pickImages(imageFolder: Path, numOfImages) -> List[Path]:
     allImages = []
     for i in imageFolder.iterdir():
         if i.is_file():

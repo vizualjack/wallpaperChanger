@@ -7,20 +7,6 @@ import ctypes
 from pathlib import Path
 
 
-##### TRAY TEST SHIT
-def create_image(width, height, color1, color2):
-    # Generate an image and draw a pattern
-    image = Image.new('RGB', (width, height), color1)
-    dc = ImageDraw.Draw(image)
-    dc.rectangle(
-        (width // 2, 0, width, height // 2),
-        fill=color2)
-    dc.rectangle(
-        (0, height // 2, width // 2, height),
-        fill=color2)
-    return image
-####
-
 class Tray:  #(Thread)
     def __init__(self,icon:Path, onOpen, onLoadAll, onClose):
         # super().__init__(None, None, None, None, None, daemon=None)

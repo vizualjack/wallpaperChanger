@@ -2,11 +2,11 @@ from pathlib import Path
 from imageLoader import ImageLoader
 from imageMerger import mergeImages, mergeRandomImagesInFolder, pickImages
 from wpChanger import setImageAsWallpaper
-
+from screenSize import ScreenSize
 
 class Changer:
-    def __init__(self, imageFolder:Path, wpPath:Path) -> None:
-        self.loader = ImageLoader(imageFolder)
+    def __init__(self, imageFolder:Path, wpPath:Path, screenSize:ScreenSize) -> None:
+        self.loader = ImageLoader(imageFolder, screenSize)
         self.wpPath = wpPath
         self.currentImages = []
 
@@ -15,7 +15,9 @@ class Changer:
             for currentImage in self.currentImages:
                 self.loader.addToBlackList(currentImage)            
         self.currentImages = self.loader.downloadImages(numOfScreens)
-        # self.currentImages = pickImages(self.loader.baseFolder, numOfScreens)
+        neededRest = len(self.currentImages) - len(self.currentImages)
+        if neededRest > 0:
+            self.currentImages.extend(pickImages(self.loader.baseFolder, neededRest))
         self.__mergeAndSetGivenImages()
 
     def changeOne(self, index, currentToBlackList=False):

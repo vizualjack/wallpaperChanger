@@ -8,11 +8,12 @@ import tkinter
 from gui import ChangeGui
 from tray import Tray
 from settings import Settings
+from screenSize import ScreenSize
 
 
 
 ##### SETTINGS
-MONITOR_SIZE = "1920x1080"
+MONITOR_SIZE = ScreenSize(1920,1080)
 NUM_OF_SCREENS = 3
 IMAGES_FOLDER_PATH = Path("images")
 WP_PATH = Path("wp")
