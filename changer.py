@@ -6,6 +6,7 @@ from screenSize import ScreenSize
 
 class Changer:
     def __init__(self, imageFolder:Path, wpPath:Path, screenSize:ScreenSize) -> None:
+        self.screenSize = screenSize
         self.loader = ImageLoader(imageFolder, screenSize)
         self.wpPath = wpPath
         self.currentImages = []
@@ -35,5 +36,5 @@ class Changer:
     #     setImageAsWallpaper(mergedImage)
 
     def __mergeAndSetGivenImages(self):
-        mergedImage = mergeImages(self.wpPath, self.currentImages)
+        mergedImage = mergeImages(self.wpPath, self.currentImages, self.screenSize)
         setImageAsWallpaper(mergedImage)

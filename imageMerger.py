@@ -3,6 +3,7 @@ from pathlib import Path
 from random import randint
 from uuid import uuid4
 from typing import List
+from screenSize import ScreenSize
 
 
 def mergeRandomImagesInFolder(savePath, imagesPath, numOfImages) -> Path:
@@ -15,11 +16,11 @@ def mergeRandomImagesInFolder(savePath, imagesPath, numOfImages) -> Path:
     return mergeImages(savePath, images)
 
 
-def mergeImages(savePath, images: List[Path]):
+def mergeImages(savePath, images: List[Path], screenSize:ScreenSize):
     path = savePath
     if not isinstance(path, Path):
         path = Path(path)
-    mergedImage = Image.new("RGB", (1920*len(images),1080))
+    mergedImage = Image.new("RGB", (screenSize.width*len(images),screenSize.height))
     for i in range(len(images)):
         image = images[i]
         mergedImage.paste(Image.open(image.absolute().__str__()), [1920*i,0])
