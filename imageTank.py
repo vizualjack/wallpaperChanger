@@ -72,10 +72,13 @@ class ImageTank:
             self.blackListFolder.mkdir()
 
     def getImages(self, numOfImages):
+        print("=== getImages ===")
         imagePaths = self.downloadImages(numOfImages)
         neededRest = numOfImages - len(imagePaths)
         if neededRest > 0:
+            print(f"didn't get enough image, pick rest from image folder. needed images: {neededRest}")
             imagePaths.extend(self.getRandomImages(neededRest))
+        print("=================")
         return imagePaths        
         # return self.getRandomImages(numOfImages)
 
@@ -95,7 +98,13 @@ class ImageTank:
     def downloadImages(self, numOfImage) -> List[Path]:
         images = []
         for i in range(numOfImage):
-            image = self.downloadImage()
+            image = None
+            while not image:
+                image = self.downloadImage()
+                if not image:
+                    break
+                if image in images:
+                    image = None
             if image:
                 images.append(image)
         print("downloadImages: Images downloaded")

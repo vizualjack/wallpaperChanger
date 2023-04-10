@@ -30,6 +30,9 @@ class Changer:
         self.__mergeAndSetGivenImages()
 
     def __mergeAndSetGivenImages(self):
+        print("=== Merge images ===")
+        print(self.currentImages)
+        print("====================")
         mergedImage = mergeImages(self.wpPath, self.currentImages, self.screenSize)
         setImageAsWallpaper(mergedImage)
     
