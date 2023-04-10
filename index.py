@@ -8,23 +8,25 @@ from gui import GUI
 from tray import Tray
 from userSettings import UserSettings
 from screenSize import ScreenSize
-
+from typing import List
 
 
 ##### APP SETTINGS
 BASE_FOLDER = Path()
 #####
+class ChangeInfo:
+    def __init__(self, index, curToBlackList) -> None:
+        self.index = index
+        self.curToBlackList = curToBlackList
 
 
 def loadAll(curToBlackList=False):
-    global lastChangeTime
-    lastChangeTime = time.time()
-    myChanger.fullImageChange(userSettings.getNumOfScreens(), curToBlackList)
-    refreshGui()
+    global changeAll, toBlackList
+    changeAll = True
+    toBlackList = curToBlackList
 
 def loadNew(index, curToBlackList=False):
-    myChanger.changeOne(index, curToBlackList)
-    refreshGui()
+    changeInfos.append(ChangeInfo(index, curToBlackList))
 
 def refreshGui():
     if not cg:
@@ -60,9 +62,13 @@ trayIcon:Tray = None
 cg:GUI = None
 userSettings = UserSettings(BASE_FOLDER)
 myChanger:Changer = None
+# NEXT CHANGE DATA
+changeInfos:List[ChangeInfo] = []
+changeAll = False
+toBlackList = False
 
 def main():
-    global trayIcon, lastChangeTime, closing, userSettings, cg, myChanger
+    global trayIcon, lastChangeTime, closing, userSettings, cg, myChanger, changeAll, toBlackList, changeInfos
     if not userSettings.getChangeInterval():
         openGui()
     if not userSettings.getChangeInterval():
@@ -76,6 +82,19 @@ def main():
     # MAIN CHECK LOOP
     print("Go into main check loop")
     while not closing:
+        # CHECK AND DO CHANGE
+        if len(changeInfos) > 0 or changeAll:
+            if changeAll:
+                myChanger.fullImageChange(userSettings.getNumOfScreens(), toBlackList)
+                changeInfos.clear()
+            for changeInfo in changeInfos:
+                myChanger.changeOne(changeInfo.index, changeInfo.curToBlackList)
+            changeInfos.clear()
+            refreshGui()
+            global lastChangeTime
+            lastChangeTime = time.time()
+            changeAll = False
+        ## FULL CHANGE CHECK
         if time.time() >= lastChangeTime + userSettings.getChangeInterval():
             loadAll()
         time.sleep(1)
