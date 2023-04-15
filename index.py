@@ -9,6 +9,7 @@ from tray import Tray
 from userSettings import UserSettings
 from screenSize import ScreenSize
 from typing import List
+import subprocess
 
 
 ##### APP SETTINGS
@@ -55,6 +56,10 @@ def openGui():
         cg.loadImages(myChanger.currentImages)
     cg.show()
 
+def onOpenImages():
+    global myChanger
+    subprocess.Popen(f'explorer \"{myChanger.imageTank.imagesFolder}\"')
+
 icon = Path("icon/icon.png")
 closing = False
 lastChangeTime = 0
@@ -77,7 +82,7 @@ def main():
     # Changer init
     myChanger = Changer(BASE_FOLDER, userSettings.getMonitorSize())
     # CREATE TRAY ICON
-    trayIcon = Tray(icon, openGui, loadAll, close)
+    trayIcon = Tray(icon, openGui, loadAll, close, onOpenImages)
     trayIcon.start()
     # MAIN CHECK LOOP
     print("Go into main check loop")

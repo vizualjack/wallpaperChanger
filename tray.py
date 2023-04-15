@@ -8,9 +8,9 @@ from pathlib import Path
 
 
 class Tray:  #(Thread)
-    def __init__(self,icon:Path, onOpen, onLoadAll, onClose):
+    def __init__(self,icon:Path, onOpen, onLoadAll, onClose, onOpenImages):
         # super().__init__(None, None, None, None, None, daemon=None)
-        menuItems = [MenuItem("Open", onOpen),MenuItem("Change all", onLoadAll), MenuItem("Close", onClose)]
+        menuItems = [MenuItem("Open", onOpen),MenuItem("Change all", onLoadAll), MenuItem("Open images", onOpenImages), MenuItem("Close", onClose)]
         self.icon = CustomIcon(
             'wct',
             icon=Image.open(icon), 
