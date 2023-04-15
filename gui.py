@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 from functools import partial
 from typing import List
 from userSettings import UserSettings
+import math
+
 
 
 IMAGE_WIDTH = 300
@@ -16,7 +18,7 @@ class GUI:
         if self.userSettings.getChangeInterval():
             fullWidth = IMAGE_WIDTH+4
             fullWidth *= self.userSettings.getNumOfScreens()
-            self.root.geometry(self.__getMidGeometryForMidPos(fullWidth, 222))
+            self.root.geometry(self.__getMidGeometryForMidPos(fullWidth, 270))
         else:
             self.root.geometry(self.__getMidGeometryForMidPos(150, 20))
         self.icon = PhotoImage(file=icon.absolute().__str__())
@@ -40,6 +42,7 @@ class GUI:
         self.needSettings = False
         self.initLabel = Label(self.mainFrame, text="Wait for settings...")
         self.initLabel.grid(row=0,column=0)
+        self.checkStates = []
         if not self.userSettings.getChangeInterval():
             self.needSettings = True
             self.openSettings()
@@ -145,11 +148,30 @@ class GUI:
         Button(allLoader, text="All to blacklist", command=partial(self.onLoadAll, True)).grid(column=1,row=0)
         Button(self.mainFrame, text="Settings", command=self.openSettings).grid(column=2,row=0)
         for i in range(self.userSettings.getNumOfScreens()):
-            imageBtns = Frame(self.mainFrame)
-            imageBtns.grid(column=i,row=2)
-            imageBtns.grid()
-            Button(imageBtns, text="New one", command=partial(self.onLoadOne, i, False)).grid(column=0,row=0)
-            Button(imageBtns, text="To blacklist", command=partial(self.onLoadOne, i, True)).grid(column=1,row=0)
+            # checks = Frame(self.mainFrame)
+            # checks.grid(column=i,row=2)
+            # checks.grid()
+            checkState = IntVar(self.mainFrame)
+            check = Checkbutton(self.mainFrame, variable=checkState)
+            check.grid(column=i,row=2)
+            self.checkStates.append(checkState)
+        midVal = int(self.userSettings.getNumOfScreens() / 2)
+        Button(self.mainFrame, text="New one", command=self.__onNewOnes).grid(column=midVal,row=3)
+        Button(self.mainFrame, text="To blacklist", command=self.__blackList).grid(column=midVal,row=4)
+
+    def __onNewOnes(self):
+        for index in range(len(self.checkStates)):
+            checkState = self.checkStates[index]
+            if checkState.get() == 1:
+                self.onLoadOne(index, False)
+        # partial(self.onLoadOne, i, False)
+
+    def __blackList(self):
+        for index in range(len(self.checkStates)):
+            checkState = self.checkStates[index]
+            if checkState.get() == 1:
+                self.onLoadOne(index, True)
+        # partial(self.onLoadOne, i, True)
 
     def __getMidGeometryForMidPos(self, width, height):
         x = int((self.root.winfo_screenwidth() / 2) - (width / 2))
