@@ -92,8 +92,13 @@ def main():
             if changeAll:
                 myChanger.fullImageChange(userSettings.getNumOfScreens(), toBlackList)
                 changeInfos.clear()
+            indexes = []
+            currentToBlackList = False
             for changeInfo in changeInfos:
-                myChanger.changeOne(changeInfo.index, changeInfo.curToBlackList)
+                # myChanger.changeOne(changeInfo.index, changeInfo.curToBlackList)
+                indexes.append(changeInfo.index)
+                currentToBlackList = changeInfo.curToBlackList
+            myChanger.changeMultiple(indexes, currentToBlackList)
             changeInfos.clear()
             refreshGui()
             global lastChangeTime

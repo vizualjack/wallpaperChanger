@@ -20,6 +20,15 @@ class Changer:
         self.__mergeAndSetGivenImages()
 
     def changeOne(self, index, currentToBlackList=False):
+        self.__changeImageOnIndex(index, currentToBlackList)
+        self.__mergeAndSetGivenImages()
+    
+    def changeMultiple(self, indexes, currentToBlackList=False):
+        for index in indexes:    
+            self.__changeImageOnIndex(index, currentToBlackList)
+        self.__mergeAndSetGivenImages()
+
+    def __changeImageOnIndex(self, index, currentToBlackList=False):
         if index >= len(self.currentImages) or index < 0:
             print("Index out of range")
             return
@@ -27,7 +36,6 @@ class Changer:
         if currentToBlackList:
             self.imageTank.addToBlackList(self.currentImages[index])
         self.currentImages[index] = newImage
-        self.__mergeAndSetGivenImages()
 
     def __mergeAndSetGivenImages(self):
         print("=== Merge images ===")
