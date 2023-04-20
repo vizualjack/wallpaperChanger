@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image, ImageTk
 from functools import partial
 from typing import List
-from userSettings import UserSettings
+from userSettings import UserPersister
 import math
 
 
@@ -12,7 +12,7 @@ import math
 IMAGE_WIDTH = 300
 
 class GUI:
-    def __init__(self, icon:Path, userSettings:UserSettings, onLoadOne, onLoadAll, onClose) -> None:
+    def __init__(self, icon:Path, userSettings:UserPersister, onLoadOne, onLoadAll, onClose) -> None:
         self.userSettings = userSettings
         self.root = Tk()
         if self.userSettings.getChangeInterval():

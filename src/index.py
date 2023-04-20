@@ -6,7 +6,7 @@ import time
 from changer import Changer
 from gui import GUI
 from tray import Tray
-from userSettings import UserSettings
+from userSettings import UserPersister
 from screenSize import ScreenSize
 from typing import List
 import subprocess
@@ -65,7 +65,7 @@ closing = False
 lastChangeTime = 0
 trayIcon:Tray = None
 cg:GUI = None
-userSettings = UserSettings(BASE_FOLDER)
+userSettings = UserPersister(BASE_FOLDER)
 myChanger:Changer = None
 # NEXT CHANGE DATA
 changeInfos:List[ChangeInfo] = []
