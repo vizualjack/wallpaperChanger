@@ -1,4 +1,5 @@
 from image import Image
+from imageUtil import checkIfImageAlreadyExist
 from typing import List
 import re
 import requests
@@ -12,23 +13,8 @@ class ImageDler:
         self.imageSize = imageSize
         self.imageSizeStr = f"{self.imageSize.width}x{self.imageSize.height}"
         self.wallpaperPage = f"{WALLPAPER_CATALOG_PAGE}{self.imageSizeStr}"
-
-    def loadMultipleImages(self, numOfImages) -> List[Image]:
-        pass
-
-    def loadOneImage(self) -> Image:
-        pass
-
-    def getImages(self, numOfImages):
-        print("=== getImages ===")
-        imagePaths = self.downloadImages(numOfImages)
-        neededRest = numOfImages - len(imagePaths)
-        if neededRest > 0:
-            print(f"didn't get enough image, pick rest from image folder. needed images: {neededRest}")
-            imagePaths.extend(self.getRandomImages(neededRest))
-        print("=================")
-        return imagePaths        
-        # return self.getRandomImages(numOfImages)
+        self.page = 1
+        self.index = 0
 
     def downloadImages(self, numOfImage) -> List[Image]:
         images = []
@@ -38,7 +24,7 @@ class ImageDler:
                 image = self.downloadImage()
                 if not image:
                     break
-                if image in images:
+                if checkIfImageAlreadyExist(image, images):
                     image = None
             if image:
                 images.append(image)
@@ -47,7 +33,7 @@ class ImageDler:
             print("downloadImages: Not enough images")
         return images
 
-    def downloadImage(self):
+    def downloadImage(self) -> Image:
         fullImageName = None
         while not fullImageName:
             pageLink = self.__getPageLink()
@@ -56,14 +42,54 @@ class ImageDler:
             images = self.__loadImageNamesFromLink(pageLink)
             fullImageName = self.__getNextImageName(images)
             if not fullImageName:
-                self.position.nextPage()
+                self.page += 1
         if not fullImageName:
             return None
-        fullImagePath = self.__downloadImageByFullName(fullImageName)
-        self.position.save()
-        return fullImagePath    
+        image = self.__downloadImageByFullName(fullImageName)
+        return image
 
-    def __getLastPage(self):
+    def __downloadImageByFullName(self, fullImageName) -> Image:
+        downloadLink = f"https://images.wallpaperscraft.com/image/single/{fullImageName}"
+        response = requests.get(downloadLink)
+        if not response:
+            print("__downloadImageByFullName: No or error response")
+            return None
+        image = Image()
+        try:
+            image.data = response.content
+            nameParts = fullImageName.split(".")
+            image.name = nameParts[0]
+            image.extension = nameParts[1]
+            image.size = self.imageSize
+            image.type = Image.getTypeForExtension(image.extension)
+            print("__downloadImageByFullName: Image downloaded")
+        except Exception as ex:
+            print("__downloadImageByFullName: Got an error")
+            print(ex)
+            print(ex.with_traceback())
+            image = None
+        return image
+
+    def __getNextImageName(self, imagesNames: List[str]) -> str:
+        fullImageName = None
+        while not fullImageName:
+            if self.index >= len(imagesNames):
+                return None
+            imageName = imagesNames[self.index]
+            fullImageName = f"{imageName}_{self.imageSizeStr}.jpg"
+            self.index += 1
+        return fullImageName
+    
+    def __getPageLink(self) -> str:
+        lastPage = self.__getLastPage()
+        if not lastPage:
+            return None
+        if self.page > lastPage:
+            self.page = 1
+            self.index = 0
+        return f"{self.wallpaperPage}/page{self.page}"
+    
+    def __getLastPage(self) -> int:
         #### LOAD LINKS IN PAGE
         response = requests.get(self.wallpaperPage)
         lastPageSearch = self.wallpaperPage.replace(DOMAIN, "") + "/page([0-9]*)"
@@ -77,78 +103,19 @@ class ImageDler:
             page = int(match)
             if page > lastPage:
                 lastPage = page
-        return lastPage    
+        return lastPage
 
-    def __downloadImageByFullName(self,fullImageName):
-        downloadLink = f"https://images.wallpaperscraft.com/image/single/{fullImageName}"
-        response = requests.get(downloadLink)
-        if not response:
-            print("__downloadImageByFullName: No or error response")
-            return None
-        fullImagePath = self.imagesFolder.joinpath(fullImageName)
-        try:
-            f = open(fullImagePath.__str__(), "wb")
-            f.write(response.content)
-            f.flush()
-            f.close()
-            print("__downloadImageByFullName: Image downloaded")
-        except:
-            print("__downloadImageByFullName: Can't save image")
-            fullImagePath = None
-        return fullImagePath
-
-    def __getNextImageName(self, imagesNames: List[str]):
-        fullImageName = None
-        while not fullImageName:
-            imageIndex = self.position.getImageIndex()
-            if imageIndex >= len(imagesNames):
-                return None
-            imageName = imagesNames[imageIndex]
-            fullImageName = f"{imageName}_{self.screenSizeStr}.jpg"
-            self.position.nextIndex()
-            if self.__checkBlackList(fullImageName) or self.__checkImageFolder(fullImageName):
-                print("Image already exists")
-                fullImageName = None
-        return fullImageName
-    
-    def __getPageLink(self):
-        lastPage = self.__getLastPage()
-        if not lastPage:
-            return None
-        page = self.position.getPage()
-        if page > lastPage:
-            return None
-        return f"{self.wallpaperPage}/page{page}"
-
-    def __loadImageNamesFromLink(self, searchPage):
+    def __loadImageNamesFromLink(self, searchPage) -> List[str]:
         response = requests.get(searchPage)
         if not response:
             print("__loadImagesFromLink: Got no response")
             return None
-        imageSearch = f'/download/([^"/]*)/{self.screenSizeStr}'
+        imageSearch = f'/download/([^"/]*)/{self.imageSizeStr}'
         matches = re.findall(imageSearch, response.text)
         if not matches or len(matches) == 0:
             print("__loadImagesFromLink: No matches")
             return None
         return matches
-
-
-    # def __checkBlackList(self, fullImageName):
-    #     self.__checkFolderForItem(self.blackListFolder, fullImageName)
-    
-    # def __checkImageFolder(self, fullImageName):
-    #     self.__checkFolderForItem(self.imagesFolder, fullImageName)    
-
-    # def __checkFolderForItem(self, folder:Path, fullItemName):
-    #     for file in folder.iterdir():
-    #         if fullItemName == file.name:
-    #             return True
-    #     return False
-
-
-
-
-
 
 
 ############ SHOULD HANDLE WHERE ELSE

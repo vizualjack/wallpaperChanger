@@ -15,7 +15,9 @@ class Image:
 
     #### STATIC CONSTRUCTORS
     @staticmethod
-    def fromPath(path:Path):
+    def fromPath(path) -> 'Image':
+        if isinstance(path, str):
+            path = Path(path)
         image = Image()
         nameParts = path.name.split(".")
         image.name = nameParts[0]
@@ -25,17 +27,19 @@ class Image:
         image.data = pilImage.tobytes()
         width = pilImage.size[0]
         height = pilImage.size[1]
-        image.imageSize = Image.Size(width, height)
+        image.size = Image.Size(width, height)
         # image.imageType = pilImage.format  # ???
-        extension = image.extension.lower()
-        if extension == "jpg" or extension == "jpeg":
-            image.type = Image.Type.JPG
-        elif extension == "png":
-            image.type = Image.Type.PNG
+        image.type = Image.getTypeForExtension(image.extension)
+        return image
     
-    # @staticmethod
-    # def fromData(bytes:bytes):
-    #     pass
+    @staticmethod
+    def getTypeForExtension(extension:str) -> Type:
+        extension = extension.lower()
+        if extension == "jpg" or extension == "jpeg":
+            return Image.Type.JPG
+        elif extension == "png":
+            return Image.Type.PNG
+        return Image.Type.UNKNOWN
     # from ...
     ########
 
@@ -67,5 +71,4 @@ class Image:
         f = open(fullPathStr, "wb")
         f.write(self.data)
         f.flush()
-        f.close()
-        
+        f.close() 

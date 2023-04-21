@@ -24,3 +24,9 @@ def getImagesWidthSum(images: List[Image]):
     for image in images:
         width += image.size.width
     return width
+
+def checkIfImageAlreadyExist(newImage:Image, images:List[Image]):
+    for image in images:
+        if image.getFullName() == newImage.getFullName():
+            return True
+    return False

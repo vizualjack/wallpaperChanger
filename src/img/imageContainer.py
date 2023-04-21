@@ -1,12 +1,6 @@
-import re
-from re import Match
-import requests
 from pathlib import Path
 from random import randint
-import os
-import json
 from typing import List
-from screenSize import ScreenSize
 from image import Image
 
 
@@ -14,7 +8,9 @@ from image import Image
 BLACKLIST_FOLDER_NAME = "blackList"
 
 class ImageContainer:
-    def __init__(self, imagesFolder:Path) -> None:
+    def __init__(self, imagesFolder) -> None:
+        if isinstance(imagesFolder, str):
+            imagesFolder = Path(imagesFolder)
         self.imagesFolder = imagesFolder
         self.blackListFolder = self.imagesFolder.joinpath(BLACKLIST_FOLDER_NAME)
         ### CREATE FOLDER IF NOT EXIST
@@ -34,10 +30,28 @@ class ImageContainer:
                 break
             pickIndex = randint(0,len(allImages)-1)
             randomImagePaths.append(allImages.pop(pickIndex))
-        images = List[Image]
+        images = []
         for imagePath in randomImagePaths:
             images.append(Image.fromPath(imagePath))
         return images
     
     def addToBlackList(self, image:Image):
         image.move(self.blackListFolder)
+
+    def add(self, image: Image):
+        image.move(self.imagesFolder)
+
+
+    
+    # def __checkBlackList(self, fullImageName):
+    #     self.__checkFolderForItem(self.blackListFolder, fullImageName)
+    
+    # def __checkImageFolder(self, fullImageName):
+    #     self.__checkFolderForItem(self.imagesFolder, fullImageName)    
+
+    # def __checkFolderForItem(self, folder:Path, fullItemName):
+    #     for file in folder.iterdir():
+    #         if fullItemName == file.name:
+    #             return True
+    #     return False
+
