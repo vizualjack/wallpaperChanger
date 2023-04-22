@@ -67,8 +67,11 @@ class Image:
     def save(self):
         if self.saveFolder is None:
             return
-        fullPathStr = self.saveFolder.joinpath(self.getFullName()).__str__()
+        fullPathStr = self.getFullPath()
         f = open(fullPathStr, "wb")
         f.write(self.data)
         f.flush()
         f.close() 
+
+    def getFullPath(self):
+        return self.saveFolder.joinpath(self.getFullName()).__str__()

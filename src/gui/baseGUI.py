@@ -18,6 +18,12 @@ class BaseGUI:
         if isinstance(self.window, Frame):
             self.parent.mainloop()
 
+    def close(self):
+        toClose = self.window
+        if isinstance(self.window, Frame):
+            toClose = self.parent
+        toClose.destroy()        
+
     def __initWindow__(self, icon:Path):
         self.icon = PhotoImage(file=icon.absolute().__str__())
         changeObj = self._getChangeableWindow()

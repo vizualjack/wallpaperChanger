@@ -2,6 +2,7 @@ from saveData import SaveData
 from persist.persister import Persister
 from pathlib import Path
 from gui.settingsGUI import SettingsGUI
+from gui.wpcGUI import WpcGUI
 from trayIcon.tray import Tray, TrayItem
 from img.image import Image
 from img.imageContainer import ImageContainer
@@ -9,6 +10,8 @@ from img.imageDler import ImageDler
 from img.imageOperator import ImageOperator
 from typing import List
 import ctypes
+from wpcTray import WpcTray
+import time
 
 
 PERSISTER_SAVE_PATH = Path("data.json")
@@ -19,39 +22,48 @@ WP_PATH = Path("wp")
 SPI_SETDESKWALLPAPER = 20
 
 class WallpaperChanger:
+    class Change:
+        def __init__(self, index, currentToBlackList) -> None:
+            self.index = index
+            self.currentToBlackList = currentToBlackList
+
     def __init__(self) -> None:
         self.images:List[Image] = []
         self.persister = Persister(PERSISTER_SAVE_PATH)
         self.saveData = SaveData.load(self.persister)
+        self.lastChangeTime = 0
+        self.changes = []
+        self.running = False
+        self.gui:WpcGUI = None
         if not self.saveData:
             self.__startInitSettings()
         else:
             self.__initWpc()
 
-    def changeMultiple(self, indexes, currentToBlacklist=False):
+    def changeMultiple(self, indexes, currentToBlackList=False):
         for index in indexes:
-            imageToChange = self.images[index]
-            if currentToBlacklist:
-                self.imageContainer.addToBlackList(imageToChange)
-            newImage = self.imageDler.downloadImage()
-            self.imageContainer.add(newImage)
-            self.imageContainer[index] = newImage
-        self.__imagesToWallpaper()
+            self.changes.append(WallpaperChanger.Change(index, currentToBlackList))
+
+    def changeAll(self, currentToBlackList=False):
+        for index in range(len(self.images)):
+            self.changes.append(WallpaperChanger.Change(index, currentToBlackList))
+
+    def stop(self):
+        self.running = False
+
+    def openWpcGui(self):
+        if not self.gui:
+            self.gui = WpcGUI(self)
 
     def __imagesToWallpaper(self):
         mergedImage = ImageOperator.mergeImagesHorizontal(self.images)
         self.__setImageAsWallpaper(mergedImage)
-        pass
 
     def __setImageAsWallpaper(self, image:Image):
-        if not isinstance(imagePath, Path):
-            path = Path(imagePath)
-        if not path.exists() or not path.is_file():
-            print("No image found")
-            return False
+        image.move(WP_PATH.parent)
         print("Set image as wallpaper...")
-        print("Full image path: " + imagePath.absolute().__str__())
-        print(ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, imagePath.absolute().__str__() , 0))
+        # print("Full image path: " + image..absolute().__str__())
+        print(ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image.getFullPath(), 0))
 
     def __startInitSettings(self):
         settingsGui = SettingsGUI(ICON_PNG_PATH, self.saveData)
@@ -73,7 +85,29 @@ class WallpaperChanger:
         self.__mainLoop()
 
     def __initTray(self):
-        pass
+        self.tray = WpcTray(self)
+
+    def __doChanges(self, changes:List[Change]):
+        for change in changes:
+            imageToChange = self.images[change.index]
+            if change.currentToBlackList:
+                self.imageContainer.addToBlackList(imageToChange)
+            newImage = self.imageDler.downloadImage()
+            self.imageContainer.add(newImage)
+            self.imageContainer[change.index] = newImage
+        self.__imagesToWallpaper()
 
     def __mainLoop(self):
-        pass
+        self.running = True
+        while self.running:
+            if time.time() - self.lastChangeTime >= self.saveData.getInterval():
+                self.changeAll()
+            if len(self.changes):
+                self.__doChanges()
+                self.lastChangeTime = time.time()
+            time.sleep(1)
+        self.saveData.save(self.persister)
+        self.tray.stop()
+        if self.gui:
+            self.gui.close()
+        
