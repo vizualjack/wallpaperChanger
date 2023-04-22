@@ -58,7 +58,6 @@ def openGui():
 
 def onOpenImages():
     global myChanger
-    subprocess.Popen(f'explorer \"{myChanger.imageTank.imagesFolder}\"')
 
 icon = Path("src/icon/icon.png")
 closing = False
@@ -71,8 +70,6 @@ myChanger:Changer = None
 changeInfos:List[ChangeInfo] = []
 changeAll = False
 toBlackList = False
-
-# [MenuItem("Open", onOpen),MenuItem("Change all", onLoadAll), MenuItem("Open images", onOpenImages), MenuItem("Close", onClose)]
 
 def main():
     global trayIcon, lastChangeTime, closing, userSettings, cg, myChanger, changeAll, toBlackList, changeInfos
