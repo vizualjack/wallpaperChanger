@@ -1,29 +1,8 @@
-from PIL import Image, ImageDraw
 from pystray import Icon, Menu, MenuItem
-from threading import Thread
 from pystray._util import win32
 from ctypes import wintypes
 import ctypes
-from pathlib import Path
 
-
-class Tray:  #(Thread)
-    def __init__(self,icon:Path, onOpen, onLoadAll, onClose, onOpenImages):
-        # super().__init__(None, None, None, None, None, daemon=None)
-        menuItems = [MenuItem("Open", onOpen),MenuItem("Change all", onLoadAll), MenuItem("Open images", onOpenImages), MenuItem("Close", onClose)]
-        self.icon = CustomIcon(
-            'wct',
-            icon=Image.open(icon), 
-            menu=menuItems,
-            onDoubleClick=onOpen
-        )
-        self.icon.title = "Wallpaper Changer"
-        
-    def start(self):
-        self.icon.run_detached()
-
-    def stop(self):
-        self.icon.stop()
 
 class CustomIcon(Icon):
     def __init__(self, name, icon=None, title=None, menu=None,onDoubleClick=None, **kwargs):

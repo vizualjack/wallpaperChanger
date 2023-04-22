@@ -116,34 +116,3 @@ class ImageDler:
             print("__loadImagesFromLink: No matches")
             return None
         return matches
-
-
-############ SHOULD HANDLE WHERE ELSE
-    # class LoadPosition:
-    #     _POSITION_SAVE_NAME = "loaderPos.json"
-    #     _KEY_PAGE = "page"
-    #     _KEY_IMAGE_INDEX = "imageIndex"
-    #     def __init__(self, baseFolder:Path) -> None:
-    #         self.savePath = baseFolder.joinpath(self._POSITION_SAVE_NAME)
-    #         self.data = {}
-    #         self.data[self._KEY_PAGE] = 1
-    #         self.data[self._KEY_IMAGE_INDEX] = 0
-    #         self.load()
-
-    #     def getPage(self):
-    #         return self.data[self._KEY_PAGE]
-        
-    #     def getImageIndex(self):
-    #         return self.data[self._KEY_IMAGE_INDEX]
-        
-    #     def nextPage(self):
-    #         self.data[self._KEY_PAGE] = self.data[self._KEY_PAGE] + 1
-    #         self.data[self._KEY_IMAGE_INDEX] = 0
-
-    #     def nextIndex(self):
-    #         self.data[self._KEY_IMAGE_INDEX] = self.data[self._KEY_IMAGE_INDEX] + 1
-
-    #     def setPos(self, page, imageIndex):
-    #         self.data[self._KEY_PAGE] = page
-    #         self.data[self._KEY_IMAGE_INDEX] = imageIndex
-    # ######## POS CLASS #######

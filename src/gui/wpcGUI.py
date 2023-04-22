@@ -11,7 +11,7 @@ import math
 
 IMAGE_WIDTH = 300
 
-class GUI:
+class WpcGUI:
     def __init__(self, icon:Path, userSettings:UserPersister, onLoadOne, onLoadAll, onClose) -> None:
         self.userSettings = userSettings
         self.root = Tk()
