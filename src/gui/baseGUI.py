@@ -50,7 +50,7 @@ class BaseGUI:
         y = int((self.window.winfo_screenheight() / 2) - (height / 2))
         self._setPosAndSize(x, y, width, height)
 
-    def _setResiable(self, resizable:bool):
+    def _setResizeable(self, resizable:bool):
         self._getChangeableWindow().resizable(resizable, resizable)
 
     def _setPosAndSize(self, x, y, width, height):

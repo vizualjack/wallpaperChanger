@@ -12,8 +12,8 @@ class SettingsGUI(BaseGUI):
         super().__init__(icon, parent)
         self.saveData = saveData
         self.saved = False
-        super()._setTitle(_WINDOW_TITLE)
-        super()._setWindowToMidPos(243,109)
+        self._setTitle(_WINDOW_TITLE)
+        self._setWindowToMidPos(243,109)
         ### init window content
         self.window.grid()
         self.changeIntervalVal = StringVar(value=self.__getSettingsValue(self.saveData.getInterval()))

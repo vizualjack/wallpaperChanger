@@ -1,10 +1,8 @@
 from pathlib import Path
-from imageTank import ImageTank
-from imageMerger import mergeImages
-from wpChanger import setImageAsWallpaper
-from screenSize import ScreenSize
+
 
 CUR_WALLPAPER_NAME = "wp"
+
 class Changer:
     def __init__(self, baseFolder:Path, screenSize:ScreenSize) -> None:
         self.screenSize = screenSize
@@ -43,7 +41,3 @@ class Changer:
         print("====================")
         mergedImage = mergeImages(self.wpPath, self.currentImages, self.screenSize)
         setImageAsWallpaper(mergedImage)
-    
-    # def __mergeAndSetRandomImages(self, numOfScreens):
-    #     mergedImage = mergeRandomImagesInFolder(self.wpFolder, self.loader.baseFolder, numOfScreens)
-    #     setImageAsWallpaper(mergedImage)
