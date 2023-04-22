@@ -1,5 +1,5 @@
-from image import Image
-from imageUtil import checkIfImageAlreadyExist
+from .image import Image
+from .imageUtil import checkIfImageAlreadyExist
 from typing import List
 import re
 import requests

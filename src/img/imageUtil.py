@@ -1,4 +1,4 @@
-from image import Image
+from .image import Image
 from typing import List
 
 def getImageWithHighestHeight(images: List[Image]):

@@ -14,28 +14,33 @@ from wpcTray import WpcTray
 import time
 
 
-PERSISTER_SAVE_PATH = Path("data.json")
-ICON_PNG_PATH = Path("src/icon/icon.png")
-IMAGE_CONTAINER_PATH = Path("images")
-WP_PATH = Path("wp")
-# win api constants
-SPI_SETDESKWALLPAPER = 20
+
 
 class WallpaperChanger:
+    ICON_PNG_PATH = Path("src/icon/icon.png")
+    PERSISTER_SAVE_PATH = Path("data.json")
+    IMAGE_CONTAINER_PATH = Path("images")
+    WP_PATH = Path("wp")
+    # win api constants
+    SPI_SETDESKWALLPAPER = 20
+
     class Change:
         def __init__(self, index, currentToBlackList) -> None:
             self.index = index
-            self.currentToBlackList = currentToBlackList
+            self.currentToBlackList = currentToBlackList        
 
     def __init__(self) -> None:
         self.images:List[Image] = []
-        self.persister = Persister(PERSISTER_SAVE_PATH)
+        self.persister = Persister(self.PERSISTER_SAVE_PATH)
         self.saveData = SaveData.load(self.persister)
         self.lastChangeTime = 0
         self.changes = []
         self.running = False
         self.gui:WpcGUI = None
+
+    def run(self):
         if not self.saveData:
+            self.saveData = SaveData()
             self.__startInitSettings()
         else:
             self.__initWpc()
@@ -54,48 +59,68 @@ class WallpaperChanger:
     def openWpcGui(self):
         if not self.gui:
             self.gui = WpcGUI(self)
+            self.gui.onClose = self.__onWpcGuiClosed
+            self.gui.show()
+        
+    def __onWpcGuiClosed(self):
+        self.gui = None
 
     def __imagesToWallpaper(self):
         mergedImage = ImageOperator.mergeImagesHorizontal(self.images)
         self.__setImageAsWallpaper(mergedImage)
 
     def __setImageAsWallpaper(self, image:Image):
-        image.move(WP_PATH.parent)
+        image.name = self.WP_PATH.name
+        image.move(self.WP_PATH.parent)
         print("Set image as wallpaper...")
         # print("Full image path: " + image..absolute().__str__())
-        print(ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image.getFullPath(), 0))
+        print(ctypes.windll.user32.SystemParametersInfoW(self.SPI_SETDESKWALLPAPER, 0, image.getFullPathStr(), 0))
 
     def __startInitSettings(self):
-        settingsGui = SettingsGUI(ICON_PNG_PATH, self.saveData)
-        settingsGui.onClose = self.__initSettings()
+        settingsGui = SettingsGUI(self.ICON_PNG_PATH, self.saveData)
+        settingsGui.onClose = self.__initSettings
+        settingsGui.show()
 
     def __initSettings(self):
         # set non user settings
         self.saveData.setPage(1)
         self.saveData.setIndex(0)
         # initial save to save at least the user settings
-        self.saveData.save(self.persister)
+        self.saveData.addToPersister(self.persister)
+        self.persister.save()
         # le go
         self.__initWpc()
 
     def __initWpc(self):
-        self.imageContainer = ImageContainer(IMAGE_CONTAINER_PATH)
+        self.imageContainer = ImageContainer(self.IMAGE_CONTAINER_PATH)
         self.imageDler = ImageDler(Image.Size(self.saveData.getWidth(), self.saveData.getHeight()))
+        for i in range(self.saveData.getNumOfScreens()):
+            self.images.append(None)
         self.__initTray()
         self.__mainLoop()
 
     def __initTray(self):
         self.tray = WpcTray(self)
 
-    def __doChanges(self, changes:List[Change]):
-        for change in changes:
+    def __doChanges(self):
+        for change in self.changes:
             imageToChange = self.images[change.index]
             if change.currentToBlackList:
                 self.imageContainer.addToBlackList(imageToChange)
-            newImage = self.imageDler.downloadImage()
-            self.imageContainer.add(newImage)
-            self.imageContainer[change.index] = newImage
+            # newImage = self.imageDler.downloadImage()
+            # if newImage:
+            #     self.imageContainer.add(newImage)
+            # else:
+            #     randomImages = self.imageContainer.getRandomImages(1)
+            #     if len(randomImages) > 0:
+            #         newImage = randomImages[0]
+            newImage = self.imageContainer.getRandomImages(1)[0]
+            if newImage:
+                self.images[change.index] = newImage
+        self.changes.clear()
         self.__imagesToWallpaper()
+        if self.gui:
+            self.gui.loadImages()
 
     def __mainLoop(self):
         self.running = True
@@ -106,8 +131,8 @@ class WallpaperChanger:
                 self.__doChanges()
                 self.lastChangeTime = time.time()
             time.sleep(1)
-        self.saveData.save(self.persister)
+        self.saveData.addToPersister(self.persister)
+        self.persister.save()
         self.tray.stop()
         if self.gui:
             self.gui.close()
-        

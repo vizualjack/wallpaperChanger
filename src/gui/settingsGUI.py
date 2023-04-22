@@ -14,6 +14,7 @@ class SettingsGUI(BaseGUI):
         self.saved = False
         self._setTitle(_WINDOW_TITLE)
         self._setWindowToMidPos(243,109)
+        self._setResizeable(False)
         ### init window content
         self.window.grid()
         self.changeIntervalVal = StringVar(value=self.__getSettingsValue(self.saveData.getInterval()))

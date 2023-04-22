@@ -1,12 +1,12 @@
-from wallpaperChanger import WallpaperChanger, ICON_PNG_PATH, IMAGE_CONTAINER_PATH
+# from wallpaperChanger import WallpaperChanger   # just for coding help
 from trayIcon.tray import Tray, TrayItem
 import subprocess
 
 
-class WpcTray:
-    def __init__(self, wallpaperChanger:WallpaperChanger) -> None:
+class WpcTray:               #:WallpaperChanger  # just for coding help
+    def __init__(self, wallpaperChanger) -> None:
         self.wallpaperChanger = wallpaperChanger
-        self.tray = Tray(ICON_PNG_PATH, self.__createTrayItems())
+        self.tray = Tray(self.wallpaperChanger.ICON_PNG_PATH, self.__createTrayItems())
         self.tray.start()
 
     def stop(self):
@@ -18,7 +18,8 @@ class WpcTray:
         trayItems.append(TrayItem("Change all", self.wallpaperChanger.changeAll))
         trayItems.append(TrayItem("Open images", self.__openImageFolder))
         trayItems.append(TrayItem("Close", self.wallpaperChanger.stop))
+        return trayItems
         
     def __openImageFolder(self):
-        subprocess.Popen(f'explorer \"{IMAGE_CONTAINER_PATH.absolute().__str__()}\"')
+        subprocess.Popen(f'explorer \"{self.wallpaperChanger.IMAGE_CONTAINER_PATH.absolute().__str__()}\"')
         

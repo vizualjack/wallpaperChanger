@@ -45,8 +45,8 @@ class BaseGUI:
             toClose = self.parent
         if not self._canBeClosed():
             return
-        self.onClose()
         toClose.destroy()
+        self.onClose()
 
     def _setTitle(self, title):
         self._getChangeableWindow().title(title)

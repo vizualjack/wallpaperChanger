@@ -73,5 +73,8 @@ class Image:
         f.flush()
         f.close() 
 
-    def getFullPath(self):
-        return self.saveFolder.joinpath(self.getFullName()).__str__()
+    def getFullPath(self) -> Path:
+        return self.saveFolder.joinpath(self.getFullName()).absolute()
+    
+    def getFullPathStr(self) -> str:
+        return self.getFullPath().__str__()

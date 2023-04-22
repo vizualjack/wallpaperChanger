@@ -64,7 +64,7 @@ class SaveData:
         saveData.dataDict = dataDict
         return saveData
     
-    def save(self, persister:Persister):
+    def addToPersister(self, persister:Persister):
         persister.setData(PERS_KEY, self.dataDict)
 
     def __setData(self, key, newVal):

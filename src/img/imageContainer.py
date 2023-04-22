@@ -1,7 +1,7 @@
 from pathlib import Path
 from random import randint
 from typing import List
-from image import Image
+from .image import Image
 
 
 
