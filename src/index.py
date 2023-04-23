@@ -1,19 +1,6 @@
-# from trayIcon.tray import Tray, TrayItem
-# from pathlib import Path
-# from gui.settingsGUI import SettingsGUI
-# from saveData import SaveData
-
-# def onSettingsGuiClosed():
-#     global saveData
-#     print("I could close it :D")
-#     print(saveData.getHeight())
-
-# iconPath = Path("src/icon/icon.png")
-# saveData = SaveData()
-# print(saveData.getHeight())
-# settingsGUI = SettingsGUI(iconPath, saveData)
-# settingsGUI.onClose = onSettingsGuiClosed
-# settingsGUI.show()
+########## BUILD LINE
+# pyinstaller src/index.py --name "Wallpaper Changer" --icon=src/icon/icon.ico --add-data "src/icon/;src/icon/" --noconsole    # doesnt work yet --onefile 
+############
 
 from wallpaperChanger import WallpaperChanger
 

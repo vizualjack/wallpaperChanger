@@ -108,14 +108,13 @@ class WallpaperChanger:
             imageToChange = self.images[change.index]
             if change.currentToBlackList:
                 self.imageContainer.addToBlackList(imageToChange)
-            # newImage = self.imageDler.downloadImage()
-            # if newImage:
-            #     self.imageContainer.add(newImage)
-            # else:
-            #     randomImages = self.imageContainer.getRandomImages(1)
-            #     if len(randomImages) > 0:
-            #         newImage = randomImages[0]
-            newImage = self.imageContainer.getRandomImages(1, self.images)[0]
+            newImage = self.imageDler.downloadImage()
+            if newImage:
+                self.imageContainer.add(newImage)
+            else:
+                randomImages = self.imageContainer.getRandomImages(1,self.images)
+                if len(randomImages) > 0:
+                    newImage = randomImages[0]
             if newImage:
                 self.images[change.index] = newImage
         self.changes.clear()
