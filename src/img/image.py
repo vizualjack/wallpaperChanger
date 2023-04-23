@@ -56,8 +56,8 @@ class Image:
     
     def move(self, newFolder:Path):
         if not self.saveFolder is None:
-            currentFullPath = self.saveFolder.joinpath(self.getFullName())
-            newFullPath = newFolder.joinpath(self.getFullName())
+            currentFullPath = self.getFullPath()
+            newFullPath = newFolder.joinpath(self.getFullName()).absolute()
             currentFullPath.replace(newFullPath)
             self.saveFolder = newFolder
         else:

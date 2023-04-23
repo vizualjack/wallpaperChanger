@@ -60,6 +60,7 @@ class WallpaperChanger:
         if not self.gui:
             self.gui = WpcGUI(self)
             self.gui.onClose = self.__onWpcGuiClosed
+            self.gui.loadImages()
             self.gui.show()
         
     def __onWpcGuiClosed(self):
@@ -95,7 +96,7 @@ class WallpaperChanger:
         self.imageContainer = ImageContainer(self.IMAGE_CONTAINER_PATH)
         self.imageDler = ImageDler(Image.Size(self.saveData.getWidth(), self.saveData.getHeight()))
         for i in range(self.saveData.getNumOfScreens()):
-            self.images.append(None)
+            self.images.append(Image())
         self.__initTray()
         self.__mainLoop()
 
@@ -114,7 +115,7 @@ class WallpaperChanger:
             #     randomImages = self.imageContainer.getRandomImages(1)
             #     if len(randomImages) > 0:
             #         newImage = randomImages[0]
-            newImage = self.imageContainer.getRandomImages(1)[0]
+            newImage = self.imageContainer.getRandomImages(1, self.images)[0]
             if newImage:
                 self.images[change.index] = newImage
         self.changes.clear()

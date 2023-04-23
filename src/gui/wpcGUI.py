@@ -55,7 +55,7 @@ class WpcGUI(BaseGUI):             # :WallpaperChanger   # for coding help
         # add new images
         index = 0
         for image in self.wallpaperChanger.images:
-            img = Image.open(image.data)
+            img = Image.open(image.getFullPath())
             scalingFactor = img.size[1] / img.size[0]
             height = int(scalingFactor * IMAGE_WIDTH)
             resized = img.resize((IMAGE_WIDTH, height), Image.LANCZOS)
@@ -89,7 +89,7 @@ class WpcGUI(BaseGUI):             # :WallpaperChanger   # for coding help
     def __getIndexes(self):
         indexes = []
         for index in range(len(self.checkStates)):
-            checkState = (IntVar)(self.checkStates[index])
+            checkState = self.checkStates[index]
             if checkState.get() == 1:
                 indexes.append(index)
         return indexes

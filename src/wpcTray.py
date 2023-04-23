@@ -15,11 +15,14 @@ class WpcTray:               #:WallpaperChanger  # just for coding help
     def __createTrayItems(self):
         trayItems = []
         trayItems.append(TrayItem("Open", self.wallpaperChanger.openWpcGui))
-        trayItems.append(TrayItem("Change all", self.wallpaperChanger.changeAll))
+        trayItems.append(TrayItem("Change all", self.__changeAll))
         trayItems.append(TrayItem("Open images", self.__openImageFolder))
         trayItems.append(TrayItem("Close", self.wallpaperChanger.stop))
         return trayItems
         
+    def __changeAll(self):
+        self.wallpaperChanger.changeAll()
+
     def __openImageFolder(self):
         subprocess.Popen(f'explorer \"{self.wallpaperChanger.IMAGE_CONTAINER_PATH.absolute().__str__()}\"')
         
