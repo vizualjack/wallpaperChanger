@@ -1,3 +1,8 @@
+from __future__ import annotations 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:  # here goes just the stuff only for type checking
+    from wallpaperChanger import WallpaperChanger
+######
 from tkinter import *
 from tkinter.ttk import *
 from pathlib import Path
@@ -6,13 +11,12 @@ from functools import partial
 from typing import List
 from .baseGUI import BaseGUI
 from .settingsGUI import SettingsGUI
-# from wallpaperChanger import WallpaperChanger   # just for coding help
 
 
 IMAGE_WIDTH = 300
 
-class WpcGUI(BaseGUI):             # :WallpaperChanger   # for coding help
-    def __init__(self, wallpaperChanger, parent: Tk = None) -> None:
+class WpcGUI(BaseGUI):
+    def __init__(self, wallpaperChanger:WallpaperChanger, parent: Tk = None) -> None:
         super().__init__(wallpaperChanger.ICON_PNG_PATH, parent)
         self.wallpaperChanger = wallpaperChanger
         self.settingsWindow:SettingsGUI = None

@@ -1,10 +1,14 @@
-# from wallpaperChanger import WallpaperChanger   # just for coding help
+from __future__ import annotations 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:  # here goes just the stuff only for type checking
+    from wallpaperChanger import WallpaperChanger
+######
 from trayIcon.tray import Tray, TrayItem
 import subprocess
 
 
-class WpcTray:               #:WallpaperChanger  # just for coding help
-    def __init__(self, wallpaperChanger) -> None:
+class WpcTray:
+    def __init__(self, wallpaperChanger:WallpaperChanger) -> None:
         self.wallpaperChanger = wallpaperChanger
         self.tray = Tray(self.wallpaperChanger.ICON_PNG_PATH, self.__createTrayItems())
         self.tray.start()
