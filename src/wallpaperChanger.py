@@ -124,6 +124,8 @@ class WallpaperChanger:
 
     def __mainLoop(self):
         self.running = True
+        self.imageDler.index = self.saveData.getIndex()
+        self.imageDler.page = self.saveData.getPage()
         while self.running:
             if time.time() - self.lastChangeTime >= self.saveData.getInterval():
                 self.changeAll()
@@ -131,6 +133,8 @@ class WallpaperChanger:
                 self.__doChanges()
                 self.lastChangeTime = time.time()
             time.sleep(1)
+        self.saveData.setIndex(self.imageDler.index)
+        self.saveData.setPage(self.imageDler.page)
         self.saveData.addToPersister(self.persister)
         self.persister.save()
         self.tray.stop()
