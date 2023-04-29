@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from PIL import Image as PILImage
+from persist.filePers import saveBytes
 
 class Image:
     class Type(Enum):
@@ -64,14 +65,12 @@ class Image:
             self.saveFolder = newFolder
             self.save()
 
-    def save(self):
+    def save(self, saveFolder:Path=None):
+        if saveFolder:
+            self.saveFolder = saveFolder
         if self.saveFolder is None:
             return
-        fullPathStr = self.getFullPath()
-        f = open(fullPathStr, "wb")
-        f.write(self.data)
-        f.flush()
-        f.close() 
+        saveBytes(self.getFullPath(), self.data)
 
     def getFullPath(self) -> Path:
         return self.saveFolder.joinpath(self.getFullName()).absolute()

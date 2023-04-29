@@ -2,22 +2,25 @@ from pathlib import Path
 from random import randint
 from typing import List
 from .image import Image
+import os
+# from ..persist.filePers import readStrList, saveStrList
 
-
-
-BLACKLIST_FOLDER_NAME = "blackList"
 
 class ImageContainer:
     def __init__(self, imagesFolder) -> None:
         if isinstance(imagesFolder, str):
             imagesFolder = Path(imagesFolder)
         self.imagesFolder = imagesFolder
-        self.blackListFolder = self.imagesFolder.joinpath(BLACKLIST_FOLDER_NAME)
+        # self.blackListFile = self.imagesFolder.joinpath(BLACKLIST_FILE_NAME)
+        self.blackList = []  # self.__initBlackList()
         ### CREATE FOLDER IF NOT EXIST
         if not self.imagesFolder.exists():
             self.imagesFolder.mkdir()
-        if not self.blackListFolder.exists():
-            self.blackListFolder.mkdir()
+
+    # def __initBlackList(self):
+    #     if not self.blackListFile.exists():
+    #         return []
+    #     return readStrList(self.blackListFile)
 
     def getRandomImages(self, numOfImages, blackList:List[Image]=None) -> List[Image]:
         allImages = []
@@ -54,23 +57,22 @@ class ImageContainer:
                 blackListPathsStr.append(blImage.getFullPathStr())
         return blackListPathsStr
     
-    def addToBlackList(self, image:Image):
-        image.move(self.blackListFolder)
-
-    def add(self, image: Image):
+    def add(self, image: Image) -> bool:
+        if image.getFullName() in self.blackList:
+            return False
         image.move(self.imagesFolder)
+        return True
 
+    def remove(self, image: Image):
+        if image.saveFolder != self.imagesFolder:
+            return False
+        os.remove(image.getFullPath())
+        return True
 
-    
-    # def __checkBlackList(self, fullImageName):
-    #     self.__checkFolderForItem(self.blackListFolder, fullImageName)
-    
-    # def __checkImageFolder(self, fullImageName):
-    #     self.__checkFolderForItem(self.imagesFolder, fullImageName)    
+    def addToBlackList(self, image:Image):
+        self.blackList.append(image.getFullName())
+        # saveStrList(self.blackListFile, self.blackList)
 
-    # def __checkFolderForItem(self, folder:Path, fullItemName):
-    #     for file in folder.iterdir():
-    #         if fullItemName == file.name:
-    #             return True
-    #     return False
-
+    def removeFromBlackList(self, image:Image):
+        self.blackList.pop(image.getFullName())
+        # saveStrList(self.blackListFile, self.blackList)

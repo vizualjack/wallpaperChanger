@@ -1,3 +1,8 @@
+from __future__ import annotations 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:  # here goes just the stuff only for type checking
+    from wallpaperChanger import WallpaperChanger
+######
 from pathlib import Path
 from tkinter import *
 from tkinter.ttk import *
@@ -8,19 +13,19 @@ from .baseGUI import BaseGUI
 _WINDOW_TITLE = "Settings"
 
 class SettingsGUI(BaseGUI):
-    def __init__(self, icon: Path, saveData:SaveData, parent: Tk = None) -> None:
+    def __init__(self, icon: Path, wpc:WallpaperChanger, parent: Tk = None) -> None:
         super().__init__(icon, parent)
-        self.saveData = saveData
+        self.wpc = wpc
         self.saved = False
         self._setTitle(_WINDOW_TITLE)
         self._setWindowToMidPos(243,109)
         self._setResizeable(False)
         ### init window content
         self.window.grid()
-        self.changeIntervalVal = StringVar(value=self.__getSettingsValue(self.saveData.getInterval()))
-        self.monitorWidthVal = StringVar(value=self.__getSettingsValue(self.saveData.getWidth()))
-        self.monitorHeightVal = StringVar(value=self.__getSettingsValue(self.saveData.getHeight()))
-        self.numOfScreensVal = StringVar(value=self.__getSettingsValue(self.saveData.getNumOfScreens()))
+        self.changeIntervalVal = StringVar(value=self.__getSettingsValue(self.wpc.saveData.getInterval()))
+        self.monitorWidthVal = StringVar(value=self.__getSettingsValue(self.wpc.imageDler.imageSize.width))
+        self.monitorHeightVal = StringVar(value=self.__getSettingsValue(self.wpc.imageDler.imageSize.height))
+        self.numOfScreensVal = StringVar(value=self.__getSettingsValue(self.wpc.saveData.getNumOfScreens()))
         ## CHANGE INTERVAL
         Label(self.window, text="Change interval(secs)").grid(row=0,column=0)
         Entry(self.window, textvariable=self.changeIntervalVal).grid(row=0, column=1)
@@ -39,10 +44,10 @@ class SettingsGUI(BaseGUI):
     def __saveSettings(self):
         if not self.__validValues():
             return
-        self.saveData.setInterval(int(self.changeIntervalVal.get()))
-        self.saveData.setWidth(int(self.monitorWidthVal.get()))
-        self.saveData.setHeight(int(self.monitorHeightVal.get()))
-        self.saveData.setNumOfScreens(int(self.numOfScreensVal.get()))
+        self.wpc.saveData.setInterval(int(self.changeIntervalVal.get()))
+        self.wpc.imageDler.imageSize.width = int(self.monitorWidthVal.get())
+        self.wpc.imageDler.imageSize.height = int(self.monitorHeightVal.get())
+        self.wpc.saveData.setNumOfScreens(int(self.numOfScreensVal.get()))
         self.saved = True
         self._close()
 

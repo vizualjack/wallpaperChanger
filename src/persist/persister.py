@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+from .filePers import readStr, saveStr
 
 
 class Persister:
@@ -11,15 +12,12 @@ class Persister:
     def load(self):
         if not self.dataFilePath.exists():
             return
-        f = open(self.dataFilePath.absolute().__str__())
-        self.data = json.loads(f.read())
-        f.close()
+        jsonStr = readStr(self.dataFilePath.absolute())
+        self.data = json.loads(jsonStr)
 
     def save(self):
-        f = open(self.dataFilePath.absolute().__str__(), "w")
-        f.write(json.dumps(self.data))
-        f.flush()
-        f.close()
+        jsonStr = json.dumps(self.data)
+        saveStr(self.dataFilePath.absolute(), jsonStr)
 
     def getData(self,key):
         if not key in self.data:

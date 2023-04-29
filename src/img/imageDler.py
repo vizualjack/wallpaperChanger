@@ -11,8 +11,6 @@ DOMAIN = WALLPAPER_CATALOG_PAGE.split("/catalog")[0]
 class ImageDler:
     def __init__(self, imageSize: Image.Size) -> None:
         self.imageSize = imageSize
-        self.imageSizeStr = f"{self.imageSize.width}x{self.imageSize.height}"
-        self.wallpaperPage = f"{WALLPAPER_CATALOG_PAGE}{self.imageSizeStr}"
         self.page = 1
         self.index = 0
 
@@ -76,7 +74,7 @@ class ImageDler:
             if self.index >= len(imagesNames):
                 return None
             imageName = imagesNames[self.index]
-            fullImageName = f"{imageName}_{self.imageSizeStr}.jpg"
+            fullImageName = f"{imageName}_{self.__getImageSizeStr()}.jpg"
             self.index += 1
         return fullImageName
     
@@ -87,12 +85,12 @@ class ImageDler:
         if self.page > lastPage:
             self.page = 1
             self.index = 0
-        return f"{self.wallpaperPage}/page{self.page}"
+        return f"{self.__getWallpaperPage()}/page{self.page}"
     
     def __getLastPage(self) -> int:
         #### LOAD LINKS IN PAGE
-        response = requests.get(self.wallpaperPage)
-        lastPageSearch = self.wallpaperPage.replace(DOMAIN, "") + "/page([0-9]*)"
+        response = requests.get(self.__getWallpaperPage())
+        lastPageSearch = self.__getWallpaperPage().replace(DOMAIN, "") + "/page([0-9]*)"
         matches = re.findall(lastPageSearch, response.text)
         if not matches:
             print("Found no pages")
@@ -110,9 +108,15 @@ class ImageDler:
         if not response:
             print("__loadImagesFromLink: Got no response")
             return None
-        imageSearch = f'/download/([^"/]*)/{self.imageSizeStr}'
+        imageSearch = f'/download/([^"/]*)/{self.__getImageSizeStr()}'
         matches = re.findall(imageSearch, response.text)
         if not matches or len(matches) == 0:
             print("__loadImagesFromLink: No matches")
             return None
         return matches
+    
+    def __getImageSizeStr(self) -> str:
+        return f"{self.imageSize.width}x{self.imageSize.height}"
+    
+    def __getWallpaperPage(self) -> str:
+        return f"{WALLPAPER_CATALOG_PAGE}{self.__getImageSizeStr()}"
