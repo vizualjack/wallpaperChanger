@@ -3,7 +3,6 @@ from random import randint
 from typing import List
 from .image import Image
 import os
-# from ..persist.filePers import readStrList, saveStrList
 
 
 class ImageContainer:
@@ -12,15 +11,10 @@ class ImageContainer:
             imagesFolder = Path(imagesFolder)
         self.imagesFolder = imagesFolder
         # self.blackListFile = self.imagesFolder.joinpath(BLACKLIST_FILE_NAME)
-        self.blackList = []  # self.__initBlackList()
+        self.blackList = []
         ### CREATE FOLDER IF NOT EXIST
         if not self.imagesFolder.exists():
             self.imagesFolder.mkdir()
-
-    # def __initBlackList(self):
-    #     if not self.blackListFile.exists():
-    #         return []
-    #     return readStrList(self.blackListFile)
 
     def getRandomImages(self, numOfImages, blackList:List[Image]=None) -> List[Image]:
         allImages = []
@@ -71,8 +65,6 @@ class ImageContainer:
 
     def addToBlackList(self, image:Image):
         self.blackList.append(image.getFullName())
-        # saveStrList(self.blackListFile, self.blackList)
 
     def removeFromBlackList(self, image:Image):
         self.blackList.pop(image.getFullName())
-        # saveStrList(self.blackListFile, self.blackList)

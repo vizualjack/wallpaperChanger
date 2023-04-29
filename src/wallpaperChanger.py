@@ -39,7 +39,7 @@ class WallpaperChanger:
     def __init__(self) -> None:
         self.images:List[Image] = []
         self.persister = Persister(self.PERSISTER_SAVE_PATH)
-        self.saveData = SaveData.load(self.persister)        
+        self.saveData = SaveData.load(self.persister)
         self.imageContainer = persist.imageContainerPersist.loadFromPersister(self.persister)
         self.imageDler = persist.imageDlerPersist.loadFromPersister(self.persister)
         self.lastChangeTime = 0
@@ -111,11 +111,13 @@ class WallpaperChanger:
     def __doChanges(self):
         for change in self.changes:
             imageToChange = self.images[change.index]
-            if change.changeType == WallpaperChanger.Change.ChangeType.TO_BLACKLIST:
-                self.imageContainer.addToBlackList(imageToChange)
-            elif change.changeType == WallpaperChanger.Change.ChangeType.SAVE:
-                self.imageContainer.add(imageToChange)
-            newImage = self.imageDler.downloadImage()
+            newImage = None
+            if not self.saveData.getUseOnlySavedImages():
+                if change.changeType == WallpaperChanger.Change.ChangeType.TO_BLACKLIST:
+                    self.imageContainer.addToBlackList(imageToChange)
+                elif change.changeType == WallpaperChanger.Change.ChangeType.SAVE:
+                    self.imageContainer.add(imageToChange)
+                newImage = self.imageDler.downloadImage()
             if not newImage:
                 randomImages = self.imageContainer.getRandomImages(1,self.images)
                 if len(randomImages) > 0:

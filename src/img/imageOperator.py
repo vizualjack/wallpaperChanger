@@ -1,8 +1,9 @@
 from PIL import Image as PILImage
 from typing import List
 from .image import Image
-from .imageUtil import getImageWithHighestHeight, getImagesWidthSum
+from .imageUtil import getImageWithHighestHeight, getImagesWidthSum, loadPILImage
 import io
+from pathlib import Path
 
 
 class ImageOperator:
@@ -13,9 +14,7 @@ class ImageOperator:
         mergedPILImage = PILImage.new("RGB", (widthSum, highestHeightImage.size.height))
         startPos = 0
         for image in images:
-            # PILImage.frombytes(data=image.data)
-            pilImageFromImage = PILImage.frombytes("RGB", (image.size.width, image.size.height), image.data)
-            # pilImageFromImage = PILImage.open(image.data)
+            pilImageFromImage = loadPILImage(image.getFullName(), image.data)
             mergedPILImage.paste(pilImageFromImage, [startPos,0])
             startPos += image.size.width
         mergedImage = Image()

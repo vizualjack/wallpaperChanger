@@ -3,12 +3,14 @@ from persist.persister import Persister
 _SAVE_KEY = "saveData"
 _INTERVAL_KEY = "changeIntervalSecs"
 _NUMOFSCREENS_KEY = "numOfScreens"
+_USEONLYSAVEDIMAGES_KEY = "useOnlySavedImages"
 
 class SaveData:
     def __init__(self) -> None:
         self.dataDict = {}
         self.dataDict[_INTERVAL_KEY] = -1
         self.dataDict[_NUMOFSCREENS_KEY] = -1
+        self.dataDict[_USEONLYSAVEDIMAGES_KEY] = False
 
     def getInterval(self):
         return self.__getData(_INTERVAL_KEY)
@@ -21,6 +23,12 @@ class SaveData:
     
     def setNumOfScreens(self, newVal):
         self.__setData(_NUMOFSCREENS_KEY, newVal)
+
+    def getUseOnlySavedImages(self):
+        return self.__getData(_USEONLYSAVEDIMAGES_KEY)
+    
+    def setUseOnlySavedImages(self, newVal):
+        self.__setData(_USEONLYSAVEDIMAGES_KEY, newVal)
 
     @staticmethod
     def load(persister:Persister) -> 'SaveData':

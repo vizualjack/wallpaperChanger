@@ -1,7 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from PIL import Image as PILImage
-from persist.filePers import saveBytes
+from persist.filePers import saveBytes, readBytes
 
 class Image:
     class Type(Enum):
@@ -25,7 +25,7 @@ class Image:
         image.extension = nameParts[1]
         image.saveFolder = path.parent
         pilImage = PILImage.open(path)
-        image.data = pilImage.tobytes()
+        image.data = readBytes(path) # pilImage.tobytes()
         width = pilImage.size[0]
         height = pilImage.size[1]
         image.size = Image.Size(width, height)

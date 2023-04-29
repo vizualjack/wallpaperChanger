@@ -11,6 +11,7 @@ from functools import partial
 from typing import List
 from .baseGUI import BaseGUI
 from .settingsGUI import SettingsGUI
+from img.imageUtil import loadPILImage
 
 
 IMAGE_WIDTH = 300
@@ -32,6 +33,13 @@ class WpcGUI(BaseGUI):
         self.checkStates = []
         self.window.grid()
         ### top bar 
+        onlySavedImages = Frame(self.window)
+        onlySavedImages.grid(column=0,row=0)
+        onlySavedImages.grid()
+        self.onlySavedImages = IntVar(self.window)
+        if wallpaperChanger.saveData.getUseOnlySavedImages():
+            self.onlySavedImages.set(1)
+        Checkbutton(onlySavedImages, command=self.__setOnlySavedImages, variable=self.onlySavedImages, text="Only saved images").grid(column=0,row=0)
         allLoader = Frame(self.window)
         allLoader.grid(column=1,row=0)
         allLoader.grid()
@@ -59,7 +67,7 @@ class WpcGUI(BaseGUI):
         # add new images
         index = 0
         for image in self.wallpaperChanger.images:
-            img = Image.open(image.getFullPath())
+            img = loadPILImage(image.getFullName(), image.data)  # Image.open(image.getFullPath())
             scalingFactor = img.size[1] / img.size[0]
             height = int(scalingFactor * IMAGE_WIDTH)
             resized = img.resize((IMAGE_WIDTH, height), Image.LANCZOS)
@@ -70,6 +78,12 @@ class WpcGUI(BaseGUI):
             self.currentImages.append(pi)
             self.currentImageLabels.append(imageLabel)
 
+    def __setOnlySavedImages(self):
+        newUseOnlyVal = False
+        if self.onlySavedImages.get() == 1:
+            newUseOnlyVal = True
+        self.wallpaperChanger.saveData.setUseOnlySavedImages(newUseOnlyVal)
+
     def __openSettings(self):
         self.settingsWindow = SettingsGUI(self.wallpaperChanger.ICON_PNG_PATH, self.wallpaperChanger.saveData, self.parent)
         self.settingsWindow.onClose = self.__onCloseSettings
@@ -79,16 +93,16 @@ class WpcGUI(BaseGUI):
         self.settingsWindow = None
 
     def __onAllSave(self):
-        self.wallpaperChanger.changeAll(WallpaperChanger.Change.ChangeType.SAVE)
+        self.wallpaperChanger.changeAll(self.wallpaperChanger.Change.ChangeType.SAVE)
 
     def __onAllBlacklist(self):
-        self.wallpaperChanger.changeAll(WallpaperChanger.Change.ChangeType.TO_BLACKLIST)
+        self.wallpaperChanger.changeAll(self.wallpaperChanger.Change.ChangeType.TO_BLACKLIST)
     
     def __onSaveClick(self):
-        self.wallpaperChanger.changeMultiple(self.__getIndexes(), WallpaperChanger.Change.ChangeType.SAVE)
+        self.wallpaperChanger.changeMultiple(self.__getIndexes(), self.wallpaperChanger.Change.ChangeType.SAVE)
 
     def __onToBlackListClick(self):
-        self.wallpaperChanger.changeMultiple(self.__getIndexes(), WallpaperChanger.Change.ChangeType.TO_BLACKLIST)
+        self.wallpaperChanger.changeMultiple(self.__getIndexes(), self.wallpaperChanger.Change.ChangeType.TO_BLACKLIST)
 
     def __getIndexes(self):
         indexes = []
