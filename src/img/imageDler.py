@@ -109,7 +109,7 @@ class ImageDler:
     def __getLastPage(self) -> int:
         #### LOAD LINKS IN PAGE
         page = loadStr(self.__getWallpaperPage())
-        if not matches:
+        if not page:
             print("Can't load wallpaper page...scuffed or so")
             return None
         lastPageSearch = self.__getWallpaperPage().replace(DOMAIN, "") + "/page([0-9]*)"
