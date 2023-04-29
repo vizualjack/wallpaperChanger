@@ -6,7 +6,7 @@ if TYPE_CHECKING:  # here goes just the stuff only for type checking
 from pathlib import Path
 from tkinter import *
 from tkinter.ttk import *
-from saveData import SaveData
+from persist.saveData import SaveData
 from .baseGUI import BaseGUI
 
 

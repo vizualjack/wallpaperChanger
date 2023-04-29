@@ -73,6 +73,8 @@ class Image:
         saveBytes(self.getFullPath(), self.data)
 
     def getFullPath(self) -> Path:
+        if not self.saveFolder:
+            return Path(self.getFullName()).absolute()
         return self.saveFolder.joinpath(self.getFullName()).absolute()
     
     def getFullPathStr(self) -> str:

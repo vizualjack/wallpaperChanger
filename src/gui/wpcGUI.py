@@ -35,8 +35,8 @@ class WpcGUI(BaseGUI):
         allLoader = Frame(self.window)
         allLoader.grid(column=1,row=0)
         allLoader.grid()
-        Button(allLoader, text="Load all new", command=self.__onAllNew).grid(column=0,row=0)
-        Button(allLoader, text="All to blacklist", command=self.__onAllBlacklist).grid(column=1,row=0)
+        Button(allLoader, text="All save & new", command=self.__onAllSave).grid(column=0,row=0)
+        Button(allLoader, text="All blacklist & new", command=self.__onAllBlacklist).grid(column=1,row=0)
         Button(self.window, text="Settings", command=self.__openSettings).grid(column=2,row=0)
         ### settings for each screen
         for i in range(self.wallpaperChanger.saveData.getNumOfScreens()):
@@ -45,8 +45,8 @@ class WpcGUI(BaseGUI):
             check.grid(column=i,row=2)
             self.checkStates.append(checkState)
         midVal = int(self.wallpaperChanger.saveData.getNumOfScreens() / 2)
-        Button(self.window, text="New one", command=self.__onNewOneClick).grid(column=midVal,row=3)
-        Button(self.window, text="To blacklist", command=self.__onToBlackListClick).grid(column=midVal,row=4)
+        Button(self.window, text="Save & new", command=self.__onSaveClick).grid(column=midVal,row=3)
+        Button(self.window, text="To blacklist & new", command=self.__onToBlackListClick).grid(column=midVal,row=4)
 
 
     def loadImages(self):
@@ -78,17 +78,17 @@ class WpcGUI(BaseGUI):
     def __onCloseSettings(self):
         self.settingsWindow = None
 
-    def __onAllNew(self):
-        self.wallpaperChanger.changeAll(False)
+    def __onAllSave(self):
+        self.wallpaperChanger.changeAll(WallpaperChanger.Change.ChangeType.SAVE)
 
     def __onAllBlacklist(self):
-        self.wallpaperChanger.changeAll(True)
+        self.wallpaperChanger.changeAll(WallpaperChanger.Change.ChangeType.TO_BLACKLIST)
     
-    def __onNewOneClick(self):
-        self.wallpaperChanger.changeMultiple(self.__getIndexes(), False)
+    def __onSaveClick(self):
+        self.wallpaperChanger.changeMultiple(self.__getIndexes(), WallpaperChanger.Change.ChangeType.SAVE)
 
     def __onToBlackListClick(self):
-        self.wallpaperChanger.changeMultiple(self.__getIndexes(), True)
+        self.wallpaperChanger.changeMultiple(self.__getIndexes(), WallpaperChanger.Change.ChangeType.TO_BLACKLIST)
 
     def __getIndexes(self):
         indexes = []

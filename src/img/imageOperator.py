@@ -14,8 +14,8 @@ class ImageOperator:
         startPos = 0
         for image in images:
             # PILImage.frombytes(data=image.data)
-            # pilImageFromImage = PILImage.frombytes("RGB", (image.size.width, image.size.height), image.data)
-            pilImageFromImage = PILImage.open(image.getFullPath())
+            pilImageFromImage = PILImage.frombytes("RGB", (image.size.width, image.size.height), image.data)
+            # pilImageFromImage = PILImage.open(image.data)
             mergedPILImage.paste(pilImageFromImage, [startPos,0])
             startPos += image.size.width
         mergedImage = Image()

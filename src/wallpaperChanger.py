@@ -1,4 +1,4 @@
-from saveData import SaveData
+from persist.saveData import SaveData
 from persist.persister import Persister
 import persist.imageContainerPersist
 import persist.imageDlerPersist
@@ -14,6 +14,7 @@ from typing import List
 import ctypes
 from wpcTray import WpcTray
 import time
+from enum import Enum
 
 
 
@@ -26,9 +27,14 @@ class WallpaperChanger:
     SPI_SETDESKWALLPAPER = 20
 
     class Change:
-        def __init__(self, index, currentToBlackList) -> None:
+        class ChangeType(Enum):
+            NOTHING = 0
+            TO_BLACKLIST = 1
+            SAVE = 2
+
+        def __init__(self, index, changeType:ChangeType=ChangeType.NOTHING) -> None:
             self.index = index
-            self.currentToBlackList = currentToBlackList        
+            self.changeType = changeType
 
     def __init__(self) -> None:
         self.images:List[Image] = []
@@ -50,13 +56,13 @@ class WallpaperChanger:
         else:
             self.__initWpc()
 
-    def changeMultiple(self, indexes, currentToBlackList=False):
+    def changeMultiple(self, indexes, changeType:Change.ChangeType = Change.ChangeType.NOTHING):
         for index in indexes:
-            self.changes.append(WallpaperChanger.Change(index, currentToBlackList))
+            self.changes.append(WallpaperChanger.Change(index, changeType))
 
-    def changeAll(self, currentToBlackList=False):
+    def changeAll(self, changeType:Change.ChangeType = Change.ChangeType.NOTHING):
         for index in range(len(self.images)):
-            self.changes.append(WallpaperChanger.Change(index, currentToBlackList))
+            self.changes.append(WallpaperChanger.Change(index, changeType))
 
     def stop(self):
         self.running = False
@@ -105,12 +111,12 @@ class WallpaperChanger:
     def __doChanges(self):
         for change in self.changes:
             imageToChange = self.images[change.index]
-            if change.currentToBlackList:
+            if change.changeType == WallpaperChanger.Change.ChangeType.TO_BLACKLIST:
                 self.imageContainer.addToBlackList(imageToChange)
+            elif change.changeType == WallpaperChanger.Change.ChangeType.SAVE:
+                self.imageContainer.add(imageToChange)
             newImage = self.imageDler.downloadImage()
-            if newImage:
-                self.imageContainer.add(newImage)
-            else:
+            if not newImage:
                 randomImages = self.imageContainer.getRandomImages(1,self.images)
                 if len(randomImages) > 0:
                     newImage = randomImages[0]
