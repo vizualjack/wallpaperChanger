@@ -151,7 +151,6 @@ class WallpaperChanger:
                 if len(self.changes):
                     self.__doChanges()
                     self.lastChangeTime = time.time()
-                    raise Exception("moooin")
             except:
                 self.__saveException()
             time.sleep(1)
