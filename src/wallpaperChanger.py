@@ -15,7 +15,10 @@ import ctypes
 from wpcTray import WpcTray
 import time
 from enum import Enum
-
+from persist.filePers import saveStr
+import traceback
+import tkinter.messagebox
+from datetime import datetime
 
 
 class WallpaperChanger:
@@ -96,7 +99,7 @@ class WallpaperChanger:
     def __initSettings(self):
         # initial save to save at least the user settings
         self.__save()
-        # le go
+            # le go
         self.__initWpc()
 
     def __initWpc(self):
@@ -129,14 +132,28 @@ class WallpaperChanger:
         if self.gui:
             self.gui.loadImages()
 
+    def __saveException(self):
+        exceptionInfo = f"{traceback.format_exc()}\n"
+        exceptionInfo += f"Current images:\n"
+        for image in self.images:
+            exceptionInfo += f"\t{image.getFullName()}\n"
+        dtAsStr = datetime.now().strftime(f"%Y%m%d%H%M%S")
+        logFileName = f"exception_{dtAsStr}.log"
+        saveStr(logFileName, exceptionInfo)
+        tkinter.messagebox.showerror("Wallpaper Changer", f"Error thrown! See {logFileName} for more details!")
+
     def __mainLoop(self):
         self.running = True
         while self.running:
-            if time.time() - self.lastChangeTime >= self.saveData.getInterval():
-                self.changeAll()
-            if len(self.changes):
-                self.__doChanges()
-                self.lastChangeTime = time.time()
+            try:
+                if time.time() - self.lastChangeTime >= self.saveData.getInterval():
+                    self.changeAll()
+                if len(self.changes):
+                    self.__doChanges()
+                    self.lastChangeTime = time.time()
+                    raise Exception("moooin")
+            except:
+                self.__saveException()
             time.sleep(1)
         self.__save()
         self.tray.stop()
