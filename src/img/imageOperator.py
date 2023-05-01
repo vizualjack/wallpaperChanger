@@ -19,10 +19,10 @@ class ImageOperator:
             startPos += image.size.width
         mergedImage = Image()
         bytesIO = io.BytesIO()
-        mergedImage.extension = images[0].extension
+        mergedImage.extension = "jpg"
         mergedPILImage.save(bytesIO, PILImage.EXTENSION["." + mergedImage.extension])
         mergedImage.data = bytesIO.getvalue()
-        mergedImage.type = images[0].type
+        mergedImage.type = Image.Type.JPG
         mergedImage.name = "merged"
         mergedImage.size = Image.Size(widthSum, highestHeightImage)
         return mergedImage

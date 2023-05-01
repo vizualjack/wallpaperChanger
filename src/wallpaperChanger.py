@@ -74,7 +74,7 @@ class WallpaperChanger:
         if not self.gui:
             self.gui = WpcGUI(self)
             self.gui.onClose = self.__onWpcGuiClosed
-            self.gui.loadImages()
+            self.gui.refreshAllImages()
             self.gui.show()
         
     def __onWpcGuiClosed(self):
@@ -112,9 +112,11 @@ class WallpaperChanger:
         self.tray = WpcTray(self)
 
     def __doChanges(self):
+        indexes = []
         for change in self.changes:
             imageToChange = self.images[change.index]
             newImage = None
+            indexes.append(change.index)
             if not self.saveData.getUseOnlySavedImages():
                 if change.changeType == WallpaperChanger.Change.ChangeType.TO_BLACKLIST:
                     self.imageContainer.addToBlackList(imageToChange)
@@ -130,7 +132,7 @@ class WallpaperChanger:
         self.changes.clear()
         self.__imagesToWallpaper()
         if self.gui:
-            self.gui.loadImages()
+            self.gui.refreshImages(indexes)
 
     def __saveException(self):
         exceptionInfo = f"{traceback.format_exc()}\n"
