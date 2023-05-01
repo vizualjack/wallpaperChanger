@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 
 class BaseGUI:
-    def __init__(self, icon:Path, parent:Tk=None) -> None:
+    def __init__(self, icon:Path, parent:Tk=None, title:str=None, resizeable:bool=True, width:int=None, height:int=None) -> None:
         self.parent = parent
         self.window = None
         if parent:
@@ -11,7 +11,7 @@ class BaseGUI:
         else:
             self.parent = Tk()
             self.window = Frame(self.parent)
-        self.__initWindow__(icon)
+        self.__initWindow__(icon, title, resizeable, width, height)
         self.onClose = None
 
     def show(self):
@@ -24,11 +24,16 @@ class BaseGUI:
             toClose = self.parent
         toClose.destroy()        
 
-    def __initWindow__(self, icon:Path):
-        self.icon = PhotoImage(file=icon.absolute().__str__())
+    def __initWindow__(self, icon:Path, title:str=None, resizeable:bool=True,  width:int=None, height:int=None):
+        if width and height:
+            self._setWindowToMidPos(width, height)
+        if title:
+            self._setTitle(title)
         changeObj = self._getChangeableWindow()
+        self.icon = PhotoImage(file=icon.absolute().__str__())
         changeObj.iconphoto(False, self.icon)
         changeObj.protocol("WM_DELETE_WINDOW", self._close)
+        self._setResizeable(resizeable)
 
     def _getChangeableWindow(self):
         changeableWindow = self.window

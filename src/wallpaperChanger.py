@@ -22,6 +22,7 @@ from datetime import datetime
 
 
 class WallpaperChanger:
+    APPLICATION_TITLE = "Wallpaper Changer"
     ICON_PNG_PATH = Path("src/icon/icon.png")
     PERSISTER_SAVE_PATH = Path("data.json")
     IMAGE_CONTAINER_PATH = Path("images")

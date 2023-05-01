@@ -15,24 +15,19 @@ from img.imageUtil import loadPILImage
 from .guiUtil import destroyAllChildren
 
 
-IMAGE_WIDTH = 300
+_IMAGE_WIDTH = 300
+_WINDOW_HEIGHT = 270
 
-class WpcGUI(BaseGUI):
+class WpcGUI(BaseGUI):    
     def __init__(self, wallpaperChanger:WallpaperChanger, parent: Tk = None) -> None:
-        super().__init__(wallpaperChanger.ICON_PNG_PATH, parent)
-        self.wallpaperChanger = wallpaperChanger
-        self.settingsWindow:SettingsGUI = None
-        fullWidth = IMAGE_WIDTH+4
-        fullWidth *= self.wallpaperChanger.saveData.getNumOfScreens()
-        self._setWindowToMidPos(fullWidth, 270)
-        self._setTitle("Wallpaper Changer")
-        self._setResizeable(False)
-        # actual window stuff
-        # self.shownImages = []
         self.currentImages = []
         self.currentImageLabels:List[Label] = []
         self.checkStates = []
-        self.window.grid()
+        self.wallpaperChanger = wallpaperChanger
+        self.settingsWindow:SettingsGUI = None
+        fullWidth = _IMAGE_WIDTH + 4
+        fullWidth *= self.wallpaperChanger.saveData.getNumOfScreens()
+        super().__init__(wallpaperChanger.ICON_PNG_PATH, parent, wallpaperChanger.APPLICATION_TITLE, False, fullWidth, _WINDOW_HEIGHT)
         self.__createBaseLayout()
 
     def refreshAllImages(self):
@@ -48,8 +43,8 @@ class WpcGUI(BaseGUI):
         ## new one
         img = loadPILImage(image.getFullName(), image.data)  # Image.open(image.getFullPath())
         scalingFactor = img.size[1] / img.size[0]
-        height = int(scalingFactor * IMAGE_WIDTH)
-        resized = img.resize((IMAGE_WIDTH, height), Image.LANCZOS)
+        height = int(scalingFactor * _IMAGE_WIDTH)
+        resized = img.resize((_IMAGE_WIDTH, height), Image.LANCZOS)
         pi = ImageTk.PhotoImage(resized)
         imageLabel = Label(self.window, image=pi)
         ## destroy old one
@@ -67,6 +62,8 @@ class WpcGUI(BaseGUI):
         self.checkStates.clear()
         self.currentImages.clear()
         self.currentImageLabels.clear()
+        ### activates grid
+        self.window.grid()
         ### top bar 
         onlySavedImages = Frame(self.window)
         onlySavedImages.grid(column=0,row=0)
@@ -108,13 +105,12 @@ class WpcGUI(BaseGUI):
         self.refreshAllImages()
 
     def __openSettings(self):
-        self.settingsWindow = SettingsGUI(self.wallpaperChanger.ICON_PNG_PATH, self.wallpaperChanger.saveData, self.parent)
+        self.settingsWindow = SettingsGUI(self.wallpaperChanger.ICON_PNG_PATH, self.wallpaperChanger, self.parent)
         self.settingsWindow.onClose = self.__onCloseSettings
         self.settingsWindow.show()
 
     def __onCloseSettings(self):
         self.settingsWindow = None
-
     
     def __onAllChange(self):
         self.wallpaperChanger.changeAll(self.wallpaperChanger.Change.ChangeType.NOTHING)

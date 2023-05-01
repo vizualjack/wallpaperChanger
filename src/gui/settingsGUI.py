@@ -11,15 +11,14 @@ from .baseGUI import BaseGUI
 
 
 _WINDOW_TITLE = "Settings"
+_WINDOW_WIDTH = 243
+_WINDOW_HEIGHT = 109
 
 class SettingsGUI(BaseGUI):
     def __init__(self, icon: Path, wpc:WallpaperChanger, parent: Tk = None) -> None:
-        super().__init__(icon, parent)
+        super().__init__(icon, parent, _WINDOW_TITLE, False, _WINDOW_WIDTH, _WINDOW_HEIGHT)
         self.wpc = wpc
         self.saved = False
-        self._setTitle(_WINDOW_TITLE)
-        self._setWindowToMidPos(243,109)
-        self._setResizeable(False)
         ### init window content
         self.window.grid()
         self.changeIntervalVal = StringVar(value=self.__getSettingsValue(self.wpc.saveData.getInterval()))
