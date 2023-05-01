@@ -2,24 +2,24 @@ from pathlib import Path
 from io import TextIOWrapper
 from typing import List
 
-def saveStrList(filePath: Path, dataList:List[str]):
+def saveStrList(filePath:Path|str, dataList:List[str]):
     listAsOneStr = "\n".join(dataList)
     saveStr(filePath, listAsOneStr)
 
-def readStrList(filePath: Path) -> List[str]:
+def readStrList(filePath:Path|str) -> List[str]:
     listAsOneStr = readStr(filePath)
     return listAsOneStr.split("\n")
 
-def saveStr(filePath:Path, data:str):
+def saveStr(filePath:Path|str, data:str):
     __writeAndCloseFile(__openWriteStrFile(filePath), data)
 
-def readStr(filePath:Path) -> str:
+def readStr(filePath:Path|str) -> str:
     return __readAndCloseFile(__openReadStrFile(filePath))
 
-def saveBytes(filePath:Path, data:bytes):
+def saveBytes(filePath:Path|str, data:bytes):
     __writeAndCloseFile(__openWriteBytesFile(filePath), data)
 
-def readBytes(filePath:Path) -> bytes:
+def readBytes(filePath:Path|str) -> bytes:
     return __readAndCloseFile(__openReadBytesFile(filePath))
 
 def __readAndCloseFile(file:TextIOWrapper) -> any:

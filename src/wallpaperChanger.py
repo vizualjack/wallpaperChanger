@@ -19,6 +19,7 @@ from persist.filePers import saveStr
 import traceback
 import tkinter.messagebox
 from datetime import datetime
+from exceptionSaver import saveException
 
 
 class WallpaperChanger:
@@ -114,6 +115,9 @@ class WallpaperChanger:
 
     def __doChanges(self):
         indexes = []
+        downloadedImages = []
+        if not self.saveData.getUseOnlySavedImages():
+            downloadedImages = self.imageDler.downloadImages(len(self.changes))
         for change in self.changes:
             imageToChange = self.images[change.index]
             newImage = None
@@ -123,7 +127,7 @@ class WallpaperChanger:
                     self.imageContainer.addToBlackList(imageToChange)
                 elif change.changeType == WallpaperChanger.Change.ChangeType.SAVE:
                     self.imageContainer.add(imageToChange)
-                newImage = self.imageDler.downloadImage()
+                newImage = downloadedImages.pop() # self.imageDler.downloadImage()
             if not newImage:
                 randomImages = self.imageContainer.getRandomImages(1,self.images)
                 if len(randomImages) > 0:
@@ -136,14 +140,12 @@ class WallpaperChanger:
             self.gui.refreshImages(indexes)
 
     def __saveException(self):
-        exceptionInfo = f"{traceback.format_exc()}\n"
-        exceptionInfo += f"Current images:\n"
+        additionalInfo = f"Current images:\n"
         for image in self.images:
-            exceptionInfo += f"\t{image.getFullName()}\n"
-        dtAsStr = datetime.now().strftime(f"%Y%m%d%H%M%S")
-        logFileName = f"exception_{dtAsStr}.log"
-        saveStr(logFileName, exceptionInfo)
-        tkinter.messagebox.showerror("Wallpaper Changer", f"Error thrown! See {logFileName} for more details!")
+            additionalInfo += f"\t{image.getFullName()}\n"
+        logFilePath = saveException(additionalInfo)
+        logFileName = logFilePath.name
+        tkinter.messagebox.showerror("Wallpaper Changer", f"Error thrown in main thread! See {logFileName} for more details!")
 
     def __mainLoop(self):
         self.running = True

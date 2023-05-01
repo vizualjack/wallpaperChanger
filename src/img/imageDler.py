@@ -3,6 +3,8 @@ from .imageUtil import checkIfImageAlreadyExist
 from typing import List
 import re
 from web.webLoader import loadBytes, loadStr
+from web.multiWebLoader import loadMultipleBytes
+from exceptionSaver import saveException
 
 
 WALLPAPER_CATALOG_PAGE = "https://wallpaperscraft.com/catalog/anime/"
@@ -14,10 +16,68 @@ class ImageDler:
         self.page = 1
         self.index = 0
         self.lastPage = self.__getLastPage()
+        self.allPageImageNames = None
         if not self.lastPage:
             print("Page currently scuffed or so...")
 
-    def downloadImages(self, numOfImage) -> List[Image]:
+    def downloadImages(self, numOfImages) -> List[Image]:
+        imageNames = self.__getNextImageNames(numOfImages)
+        links = self.__getLinksForImageNames(imageNames)
+        images = []
+        for loadResult in loadMultipleBytes(links):
+            imageNameIndex = links.index(loadResult.link)
+            imageName = imageNames[imageNameIndex]
+            try:
+                image = Image()
+                image.data = loadResult.result
+                nameParts = imageName.split(".")
+                image.name = nameParts[0]
+                image.extension = nameParts[1]
+                image.size = self.imageSize
+                image.type = Image.getTypeForExtension(image.extension)
+                images.append(image)
+                print("__downloadImageByFullName: Image downloaded and converted")
+            except:
+                additionalInfo = "ImageDler.downloadImages: Error on converting to an image\n"
+                additionalInfo += f"link: {loadResult.link}"
+                additionalInfo += f"size of result: {len(loadResult.result)}"
+                saveException(additionalInfo)
+        return images
+
+    def __getNextImageNames(self, numOfImageNames:int):
+        imageNames = []
+        while len(imageNames) < numOfImageNames:
+            ## make sure currentImageNames is filled
+            if not self.allPageImageNames:
+                pageLink = self.__getPageLink()
+                if not pageLink:
+                    print("page scuffed")
+                    return imageNames
+                self.allPageImageNames = self.__loadImageNamesFromLink(pageLink)
+                if not self.allPageImageNames:
+                    print("page scuffed")
+                    return imageNames
+            ## load image names from currentImageNames as long as possible
+            while True:
+                curImageName = self.__getNextImageName(self.allPageImageNames)
+                if not curImageName:
+                    self.page += 1
+                    self.index = 0
+                    self.allPageImageNames = None
+                    break
+                imageNames.append(curImageName)
+                if len(imageNames) >= numOfImageNames:
+                    break
+        return imageNames
+    
+    def __getLinksForImageNames(self, imageNames:List[str]):
+        links = []
+        for imageName in imageNames:
+            downloadLink = f"https://images.wallpaperscraft.com/image/single/{imageName}"
+            links.append(downloadLink)
+        return links
+
+    def old_downloadImages(self, numOfImage) -> List[Image]:
         images = []
         if not self.lastPage:
             self.lastPage = self.__getLastPage()
@@ -27,7 +87,7 @@ class ImageDler:
         for i in range(numOfImage):
             image = None
             while not image:
-                image = self.downloadImage()
+                image = self.__downloadImage()
                 if not image:
                     break
                 if checkIfImageAlreadyExist(image, images):
@@ -39,12 +99,7 @@ class ImageDler:
             print("downloadImages: Not enough images")
         return images
 
-    def downloadImage(self) -> Image:
-        if not self.lastPage:
-            self.lastPage = self.__getLastPage()
-        if not self.lastPage:
-            print("Page currently scuffed or so...")
-            return None
+    def __downloadImage(self) -> Image:
         fullImageName = None
         while not fullImageName:
             pageLink = self.__getPageLink()
