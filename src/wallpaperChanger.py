@@ -53,13 +53,13 @@ class WallpaperChanger:
         self.gui:WpcGUI = None
 
     def run(self):
-        if not self.saveData or not self.imageContainer or not self.imageDler:
-            self.saveData = SaveData()
-            self.imageContainer = ImageContainer(self.IMAGE_CONTAINER_PATH)
-            self.imageDler = ImageDler(Image.Size(0,0))
-            self.__startInitSettings()
-        else:
+        if self.saveData or self.imageContainer or self.imageDler:
             self.__initWpc()
+            return
+        self.saveData = SaveData()
+        self.imageContainer = ImageContainer(self.IMAGE_CONTAINER_PATH)
+        self.imageDler = ImageDler(Image.Size(0,0))
+        self.__startInitSettings()
 
     def changeMultiple(self, indexes, changeType:Change.ChangeType = Change.ChangeType.NOTHING):
         for index in indexes:
@@ -118,10 +118,9 @@ class WallpaperChanger:
         downloadedImages = []
         if not self.saveData.getUseOnlySavedImages():
             downloadedImages = self.imageDler.downloadImages(len(self.changes))
-        for change in self.changes:
+        for change in self.changes: # YAGNI
             imageToChange = self.images[change.index]
             newImage = None
-            indexes.append(change.index)
             if not self.saveData.getUseOnlySavedImages():
                 if change.changeType == WallpaperChanger.Change.ChangeType.TO_BLACKLIST:
                     self.imageContainer.addToBlackList(imageToChange)
@@ -130,10 +129,11 @@ class WallpaperChanger:
                 newImage = downloadedImages.pop() # self.imageDler.downloadImage()
             if not newImage:
                 randomImages = self.imageContainer.getRandomImages(1,self.images)
-                if len(randomImages) > 0:
-                    newImage = randomImages[0]
-            if newImage:
-                self.images[change.index] = newImage
+                if len(randomImages) <= 0:
+                    continue
+                newImage = randomImages[0]
+            self.images[change.index] = newImage
+            indexes.append(change.index)
         self.changes.clear()
         self.__imagesToWallpaper()
         if self.gui:
