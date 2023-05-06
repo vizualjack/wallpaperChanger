@@ -10,7 +10,7 @@ from typing import List
 from .baseGUI import BaseGUI
 from .settingsGUI import SettingsGUI
 from .guiUtil import destroyAllChildren
-from screen import Screen
+from change.screen import Screen
 from appSettings import *
 
 

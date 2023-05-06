@@ -6,10 +6,12 @@ import time
 from util.persister import Persister
 import tkinter.messagebox
 from util.exceptionSaver import saveException
-from screen import Screen
+from change.screen import Screen
 from screeninfo import get_monitors
 from change.changer import Changer
 from appSettings import *
+from loadNew.imageDlerGUI import ImageDlerGUI
+from change.wpcImage import WpcImage
 
 
 
@@ -20,14 +22,19 @@ class Wpc:
         for monitor in get_monitors():
             self.screens.append(Screen(monitor.width, monitor.height))
         self.imageContainer = WpcImageContainer(IMAGE_FOLDER)
-        # self.imageDler = persist.imageDlerPersist.loadFromPersister(self.persister)
+        self.imageDler = None
         self.changer = Changer(self.imageContainer, self.screens)
         self.persister.loadChanger(self.changer)
         self.running = False
 
     def start(self):
-        self.tray = WpcTray(self)
-        self.__mainLoop()
+        # self.tray = WpcTray(self)
+        # self.__mainLoop()
+        screen = self.screens[0]
+        imageSize = WpcImage.Size(screen.width, screen.height)
+        self.imageDlerGUI = ImageDlerGUI(imageSize, self.imageContainer)
+        self.imageDlerGUI.show()
+        
 
     def stop(self):
         self.running = False

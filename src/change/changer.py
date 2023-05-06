@@ -5,7 +5,7 @@ from PIL import Image
 import io
 from .wpcImage import WpcImage
 from typing import List
-from screen import Screen
+from change.screen import Screen
 from .wpcImageContainer import WpcImageContainer
 from .changerGUI import ChangerGUI
 import time

@@ -1,17 +1,17 @@
-from .image import Image
-from .imageUtil import checkIfImageAlreadyExist
+from change.wpcImage import WpcImage
+from change.imageUtil import checkIfImageAlreadyExist
+from change.wpcImageContainer import WpcImageContainer
 from typing import List
 import re
-from web.webLoader import loadBytes, loadStr
-from web.multiWebLoader import loadMultipleBytes
-from exceptionSaver import saveException
+from .loader import loadBytes, loadStr, loadMultipleBytes
+from util.exceptionSaver import saveException
 
 
 WALLPAPER_CATALOG_PAGE = "https://wallpaperscraft.com/catalog/anime/"
 DOMAIN = WALLPAPER_CATALOG_PAGE.split("/catalog")[0]
 
 class ImageDler:
-    def __init__(self, imageSize: Image.Size) -> None:
+    def __init__(self, imageSize: WpcImage.Size) -> None:
         self.imageSize = imageSize
         self.page = 1
         self.index = 0
@@ -20,7 +20,7 @@ class ImageDler:
         if not self.lastPage:
             print("Page currently scuffed or so...")
 
-    def downloadImages(self, numOfImages) -> List[Image]:
+    def downloadImages(self, numOfImages) -> List[WpcImage]:
         imageNames = self.__getNextImageNames(numOfImages)
         links = self.__getLinksForImageNames(imageNames)
         images = []
@@ -28,13 +28,13 @@ class ImageDler:
             imageNameIndex = links.index(loadResult.link)
             imageName = imageNames[imageNameIndex]
             try:
-                image = Image()
+                image = WpcImage()
                 image.data = loadResult.result
                 nameParts = imageName.split(".")
                 image.name = nameParts[0]
                 image.extension = nameParts[1]
                 image.size = self.imageSize
-                image.type = Image.getTypeForExtension(image.extension)
+                image.type = WpcImage.getTypeForExtension(image.extension)
                 images.append(image)
                 print("__downloadImageByFullName: Image downloaded and converted")
             except:
@@ -77,7 +77,7 @@ class ImageDler:
             links.append(downloadLink)
         return links
 
-    def old_downloadImages(self, numOfImage) -> List[Image]:
+    def old_downloadImages(self, numOfImage) -> List[WpcImage]:
         images = []
         if not self.lastPage:
             self.lastPage = self.__getLastPage()
@@ -99,7 +99,7 @@ class ImageDler:
             print("downloadImages: Not enough images")
         return images
 
-    def __downloadImage(self) -> Image:
+    def __downloadImage(self) -> WpcImage:
         fullImageName = None
         while not fullImageName:
             pageLink = self.__getPageLink()
@@ -117,20 +117,20 @@ class ImageDler:
         image = self.__downloadImageByFullName(fullImageName)
         return image
 
-    def __downloadImageByFullName(self, fullImageName) -> Image:
+    def __downloadImageByFullName(self, fullImageName) -> WpcImage:
         downloadLink = f"https://images.wallpaperscraft.com/image/single/{fullImageName}"
         imageBytes = loadBytes(downloadLink)        
         if not imageBytes:
             print("__downloadImageByFullName: No or error response")
             return None
-        image = Image()
+        image = WpcImage()
         try:
             image.data = imageBytes
             nameParts = fullImageName.split(".")
             image.name = nameParts[0]
             image.extension = nameParts[1]
             image.size = self.imageSize
-            image.type = Image.getTypeForExtension(image.extension)
+            image.type = WpcImage.getTypeForExtension(image.extension)
             print("__downloadImageByFullName: Image downloaded")
         except Exception as ex:
             print("__downloadImageByFullName: Got an error")
