@@ -1,21 +1,39 @@
-### multi str load test
-from web.multiWebLoader import loadMultipleStr
-import time
+# from imageContainer import ImageContainer
+# from imageDler import ImageDler
+# from image import Image
 
-TEST_LINKS = [
-    r"https://realpython.com/iterate-through-dictionary-python/#iterating-through-values",
-    r"https://www.startpage.com/do/dsearch?query=python+loop+through+dict&language=english&cat=web&pl=ext-ff&extVersion=1.1.7",
-    ]
 
-counter = 1
-for loadResult in loadMultipleStr(TEST_LINKS):
-    print("Result for: " + loadResult.link)
-    f = open(f"page{counter}.html", "w", encoding="utf-8")
-    f.write(loadResult.result)
-    f.flush()
-    f.close()
-    counter += 1
-print("Done")
+# # imageContainer = ImageContainer("./images")
+# # imageDler = ImageDler(Image.Size(1920, 1080))
+# # newImage = imageDler.downloadImage()
+# # print(f"loaded image: {newImage.getFullName()}")
+# # imageContainer.add(newImage)
+# # print("put into image container")
+
+# imageContainer = ImageContainer("./images")
+# for randImg in imageContainer.getRandomImages(2):
+#     print(randImg.name)
+#     imageContainer.addToBlackList(randImg)
+
+
+# ### multi str load test
+# from web.multiWebLoader import loadMultipleStr
+# import time
+
+# TEST_LINKS = [
+#     r"https://realpython.com/iterate-through-dictionary-python/#iterating-through-values",
+#     r"https://www.startpage.com/do/dsearch?query=python+loop+through+dict&language=english&cat=web&pl=ext-ff&extVersion=1.1.7",
+#     ]
+
+# counter = 1
+# for loadResult in loadMultipleStr(TEST_LINKS):
+#     print("Result for: " + loadResult.link)
+#     f = open(f"page{counter}.html", "w", encoding="utf-8")
+#     f.write(loadResult.result)
+#     f.flush()
+#     f.close()
+#     counter += 1
+# print("Done")
 
 
 
@@ -41,7 +59,7 @@ print("Done")
 ### image load test
 # from PIL import Image as PILImage
 # from io import BytesIO
-# from img.imageUtil import loadPILImage
+# from img.imageUtil import
 
 # baseImg = PILImage.open("images/pic.jpg")
 # bytesIO = BytesIO()

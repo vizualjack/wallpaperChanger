@@ -1,11 +1,10 @@
-from persist.filePers import saveStr
+from .filePers import saveStr
 from pathlib import Path
 import traceback
 from datetime import datetime
+from appSettings import *
 
-# settings
-_EXCEPTION_FOLDER = "exceptions"
-#####
+
 def saveException(additionalInfo:str=None) -> Path:
     global initSuccessful, exceptionPath
     if not initSuccessful:
@@ -32,7 +31,7 @@ def __init():
     # if exceptionPath and not exceptionPath.is_file():
     #     initSuccessful = True
     #     return
-    exceptionPath = Path(_EXCEPTION_FOLDER)
+    exceptionPath = Path(EXCEPTION_FOLDER)
     print("Initialize exception saver")
     if exceptionPath.is_file():
         print("Can't inititalize exception saver")

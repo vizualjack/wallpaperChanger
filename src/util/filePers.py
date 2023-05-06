@@ -2,6 +2,7 @@ from pathlib import Path
 from io import TextIOWrapper
 from typing import List
 
+
 def saveStrList(filePath:Path|str, dataList:List[str]):
     listAsOneStr = "\n".join(dataList)
     saveStr(filePath, listAsOneStr)
