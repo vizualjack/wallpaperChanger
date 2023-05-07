@@ -11,6 +11,7 @@ from screeninfo import get_monitors
 from change.changer import Changer
 from appSettings import *
 from loadNew.imageDlerGUI import ImageDlerGUI
+from loadNew.imageDler import ImageDler
 from change.wpcImage import WpcImage
 
 
@@ -22,19 +23,17 @@ class Wpc:
         for monitor in get_monitors():
             self.screens.append(Screen(monitor.width, monitor.height))
         self.imageContainer = WpcImageContainer(IMAGE_FOLDER)
-        self.imageDler = None
         self.changer = Changer(self.imageContainer, self.screens)
         self.persister.loadChanger(self.changer)
+        self.imageDler = ImageDler(self.imageContainer, self.screens)
+        self.persister.load(self.imageDler)
         self.running = False
 
     def start(self):
-        # self.tray = WpcTray(self)
-        # self.__mainLoop()
-        screen = self.screens[0]
-        imageSize = WpcImage.Size(screen.width, screen.height)
-        self.imageDlerGUI = ImageDlerGUI(imageSize, self.imageContainer)
-        self.imageDlerGUI.show()
-        
+        self.tray = WpcTray(self)
+        self.__mainLoop()
+        # self.imageDlerGUI = ImageDlerGUI(imageSize, self.imageContainer)
+        # self.imageDlerGUI.show()
 
     def stop(self):
         self.running = False
@@ -49,6 +48,7 @@ class Wpc:
                 self.__saveException()
         self.__save()
         self.changer.stop()
+        self.imageDler.stop()
         self.tray.stop()
 
     def __saveException(self):
@@ -61,4 +61,5 @@ class Wpc:
 
     def __save(self):
         self.persister.addChangerForSave(self.changer)
+        self.persister.addForSave(self.imageDler)
         self.persister.save()

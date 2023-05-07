@@ -1,22 +1,27 @@
 from change.wpcImage import WpcImage
 from change.imageUtil import checkIfImageAlreadyExist
-from change.wpcImageContainer import WpcImageContainer
 from typing import List
 import re
 from .loader import loadBytes, loadStr, loadMultipleBytes
 from util.exceptionSaver import saveException
+from change.screen import Screen
+from change.wpcImageContainer import WpcImageContainer
+from .imageDlerGUI import ImageDlerGUI
 
 
 WALLPAPER_CATALOG_PAGE = "https://wallpaperscraft.com/catalog/anime/"
 DOMAIN = WALLPAPER_CATALOG_PAGE.split("/catalog")[0]
 
 class ImageDler:
-    def __init__(self, imageSize: WpcImage.Size) -> None:
-        self.imageSize = imageSize
+    def __init__(self, imageContainer:WpcImageContainer, screens: List[Screen]) -> None:
+        screen = screens[0]
+        self.imageSize = WpcImage.Size(screen.width, screen.height)
+        self.__imageContainer = imageContainer
         self.page = 1
         self.index = 0
         self.lastPage = self.__getLastPage()
         self.allPageImageNames = None
+        self.__gui = None
         if not self.lastPage:
             print("Page currently scuffed or so...")
 
@@ -43,6 +48,20 @@ class ImageDler:
                 additionalInfo += f"size of result: {len(loadResult.result)}"
                 saveException(additionalInfo)
         return images
+    
+    def openGui(self):
+        if self.__gui:
+            return
+        self.__gui = ImageDlerGUI(self, self.__imageContainer)
+        self.__gui.onClose = self.__onGuiClosed
+        self.__gui.show()
+
+    def stop(self):
+        if self.__gui:
+            self.__gui.close()
+
+    def __onGuiClosed(self):
+        self.__gui = None
 
     def __getNextImageNames(self, numOfImageNames:int):
         imageNames = []
@@ -197,3 +216,15 @@ class ImageDler:
     
     def __getWallpaperPage(self) -> str:
         return f"{WALLPAPER_CATALOG_PAGE}{self.__getImageSizeStr()}"
+
+    __KEY_INDEX = "index"
+    __KEY_PAGE = "page"
+    def getSaveDataJson(self):
+        data = {}
+        data[self.__KEY_INDEX] = self.index
+        data[self.__KEY_PAGE] = self.page
+        return data
+
+    def loadFromJson(self, data):
+        self.index = data[self.__KEY_INDEX]
+        self.page = data[self.__KEY_PAGE]

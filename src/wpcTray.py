@@ -28,6 +28,7 @@ class WpcTray:
         trayItems.append(TrayItem("Open", self.__wpc.changer.openGui))
         trayItems.append(TrayItem("Change all", self.__changeAll))
         trayItems.append(TrayItem("Open images", self.__openImageFolder))
+        trayItems.append(TrayItem("New images", self.__wpc.imageDler.openGui))
         trayItems.append(TrayItem("Close", self.__wpc.stop))
         return trayItems
         
