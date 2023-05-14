@@ -1,0 +1,15 @@
+﻿<Window x:Class="WallpaperChanger.LoadNew.ImageDlerGUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WallpaperChanger.LoadNew"
+        mc:Ignorable="d"
+        Title="Wallpaper Changer" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="Window_Closing" IsVisibleChanged="Window_IsVisibleChanged">
+    <Grid>
+        <Image x:Name="image" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" Width="800" Height="350" Source="/LoadNew/anime-girl-wolf-texas-arknights-uhdpaper.com-4K-6.552.jpg"/>
+        <Button x:Name="prev" Content="Prev" HorizontalAlignment="Center" Width="50" Margin="0,0,120,10" VerticalAlignment="Bottom" Click="prev_Click"/>
+        <Button x:Name="save" Content="Save" HorizontalAlignment="Center" Width="50" Margin="0,0,0,10" VerticalAlignment="Bottom" Click="save_Click"/>
+        <Button x:Name="next" Content="Next" HorizontalAlignment="Center" Width="50" Margin="120,0,0,10" VerticalAlignment="Bottom" Click="next_Click"/>
+    </Grid>
+</Window>

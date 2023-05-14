@@ -1,0 +1,13 @@
+﻿<Window x:Class="WallpaperChanger.Change.ChangerGUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WallpaperChanger.Change"
+        mc:Ignorable="d"
+        Title="Wallpaper Changer" Height="60" Width="800" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+    <Grid x:Name="window">
+        <Button x:Name="changeAll" Content="Change all" HorizontalAlignment="Center" Margin="0,22,0,0" VerticalAlignment="Top" Click="changeAll_Click"/>
+        <Button x:Name="settings" Content="Settings" HorizontalAlignment="Right" Margin="0,22,22,0" VerticalAlignment="Top" Click="settings_Click"/>
+    </Grid>
+</Window>
