@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,10 +41,11 @@ namespace WallpaperChanger.Shared
         private List<WpcImage> getRandomImages(int numOfImages, List<string> imagePaths)
         {
             List<WpcImage> randomImages = new List<WpcImage>();
+            var rnd = new Random();
             for (int i = 0; i < numOfImages; i++)
             {
                 if (imagePaths.Count == 0) break;
-                int pickIndex = new Random(i).Next(0,imagePaths.Count);
+                int pickIndex = rnd.Next(0,imagePaths.Count);
                 string randomPath = imagePaths[pickIndex];
                 imagePaths.RemoveAt(pickIndex);
                 randomImages.Add(new WpcImage(randomPath));
