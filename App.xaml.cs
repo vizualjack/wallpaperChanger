@@ -57,6 +57,7 @@ namespace WallpaperChanger
         {
             var menu = new System.Windows.Forms.ContextMenuStrip();
             menu.Items.Add("Open", null, new EventHandler(OnOpenClick));
+            menu.Items.Add("Change All", null, new EventHandler(OnChangeAllClick));
             menu.Items.Add("New images", null, new EventHandler(OnNewImagesClick));
             menu.Items.Add("Open images folder", null, new EventHandler(OnOpenImagesClick));
             menu.Items.Add("Close", null, new EventHandler(OnCloseClick));
@@ -67,6 +68,11 @@ namespace WallpaperChanger
                 Visible = true
             };
             trayIcon.DoubleClick += OnOpenClick;
+        }
+
+        private void OnChangeAllClick(object sender, EventArgs eventArgs)
+        {
+            changer.ChangeAllWallpaper();
         }
 
         private void OnOpenClick(object sender, EventArgs eventArgs)
