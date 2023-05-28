@@ -25,6 +25,10 @@ namespace WallpaperChanger.Shared
                 this.width = width;
                 this.height = height;
             }
+            override public string ToString()
+            {
+                return width + "x" + height;
+            }
         }
 
         public static Type getTypeForExtension(string extension)
@@ -128,6 +132,16 @@ namespace WallpaperChanger.Shared
             bi.StreamSource = new MemoryStream(data);
             bi.EndInit();
             return bi;
+        }
+
+        override public string ToString()
+        {
+            string toString = "name: " + this.name + "\n";
+            toString += "extension: " + this.extension + "\n";
+            toString += "saveFolder: " + this.saveFolder + "\n";
+            toString += "type: " + this.type.ToString() + "\n";
+            if (size != null) { toString += "size: " + this.size.ToString() + "\n"; }
+            return toString;
         }
     }
 }

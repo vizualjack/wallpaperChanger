@@ -14,7 +14,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Xps.Packaging;
 using WallpaperChanger.Shared;
 using WallpaperChanger.Util;
 
@@ -109,8 +111,10 @@ namespace WallpaperChanger.Change
             {
                 var image = wpcImage.asImage();
                 if (image == null) continue;
-                canvas.DrawImage(image, new Point(startPos, 0));
-                if (wpcImage.size != null) startPos += wpcImage.size.width;
+                var bitmap = (Bitmap)image;
+                bitmap.SetResolution(fullImage.HorizontalResolution, fullImage.VerticalResolution);
+                canvas.DrawImage(bitmap, new Point(startPos, 0));
+                startPos += bitmap.Width;
             }
             var imageData = new MemoryStream();
             canvas.Save();

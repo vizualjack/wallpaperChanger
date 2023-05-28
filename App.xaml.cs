@@ -105,7 +105,6 @@ namespace WallpaperChanger
             running = true;
             while(running)
             {
-                Debug.WriteLine("doChanges");
                 changer.doChanges();
                 Thread.Sleep(1000);
             }
