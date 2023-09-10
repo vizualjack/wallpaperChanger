@@ -27,6 +27,7 @@ namespace WallpaperChanger.Shared
         public void SetWpcImage(WpcImage newWpcImage)
         {
             wpcImage = newWpcImage;
+            wpcImage.Resize(this.width, this.height);
             hasChanged = true;
         }
 

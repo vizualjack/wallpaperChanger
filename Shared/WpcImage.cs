@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -132,6 +134,31 @@ namespace WallpaperChanger.Shared
             bi.StreamSource = new MemoryStream(data);
             bi.EndInit();
             return bi;
+        }
+
+        public void Resize(int width, int height)
+        {
+            var bitmap = (Bitmap)asImage();
+            if (bitmap == null) return;
+            var newBitmap = new Bitmap(width, height);
+            var canvas = Graphics.FromImage(newBitmap);
+            Debug.WriteLine("Resize");
+            //Debug.WriteLine(newBitmap.HorizontalResolution);
+            //Debug.WriteLine(bitmap.HorizontalResolution);
+            Debug.WriteLine(bitmap.Height);
+            var scaleFactor = (float)bitmap.Height / height;
+            bitmap.SetResolution(newBitmap.HorizontalResolution * scaleFactor, newBitmap.VerticalResolution * scaleFactor);
+            Debug.WriteLine("after SetResolution");
+            Debug.WriteLine(bitmap.Height);
+            //Debug.WriteLine(newBitmap.HorizontalResolution);
+            //Debug.WriteLine(bitmap.HorizontalResolution);
+            canvas.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            canvas.DrawImage(bitmap, new Point(0, 0));
+            canvas.Save();
+            var imageData = new MemoryStream();
+            newBitmap.Save(imageData, ImageFormat.Jpeg);
+            size = new Size(width, height);
+            data = imageData.ToArray();
         }
 
         override public string ToString()

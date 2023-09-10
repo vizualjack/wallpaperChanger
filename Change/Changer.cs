@@ -130,7 +130,7 @@ namespace WallpaperChanger.Change
         private void SetWallpaperImage(WpcImage image)
         {
             image.name = WP_NAME;
-            Path.GetFullPath(WP_NAME);
+            //Path.GetFullPath(WP_NAME);
             image.save(Path.GetPathRoot(WP_NAME));
             SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, image.getFullPath(), 0);
         }
