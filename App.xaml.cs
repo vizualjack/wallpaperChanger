@@ -32,7 +32,7 @@ namespace WallpaperChanger
         public App()
         {
             screens = new List<Shared.Screen>();
-            foreach(var wScreen in System.Windows.Forms.Screen.AllScreens)
+            foreach (var wScreen in System.Windows.Forms.Screen.AllScreens)
             {
                 screens.Add(new Shared.Screen(wScreen.Bounds.Width, wScreen.Bounds.Height));
             }
@@ -45,12 +45,6 @@ namespace WallpaperChanger
             persister.Load(imageDler);
             TrayIcon();
             StartMainLoop();
-        }
-
-        private void InitTrayIcon()
-        {
-            tiWorker = new Thread(TrayIcon);
-            tiWorker.Start();
         }
 
         private void TrayIcon()

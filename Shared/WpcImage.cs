@@ -142,18 +142,35 @@ namespace WallpaperChanger.Shared
             if (bitmap == null) return;
             var newBitmap = new Bitmap(width, height);
             var canvas = Graphics.FromImage(newBitmap);
-            Debug.WriteLine("Resize");
-            //Debug.WriteLine(newBitmap.HorizontalResolution);
-            //Debug.WriteLine(bitmap.HorizontalResolution);
-            Debug.WriteLine(bitmap.Height);
-            var scaleFactor = (float)bitmap.Height / height;
+            var imageAspectRatio = ((float)bitmap.Width / bitmap.Height);
+            var neededAspectRatio = ((float)width / height);
+            Debug.WriteLine("Image aspect ratio: " + imageAspectRatio);
+            Debug.WriteLine("Needed aspect ratio: " + neededAspectRatio);
+            var scaleFactor = 0f;
+            var topOffset = 0;
+            var leftOffset = 0;
+            if (neededAspectRatio == imageAspectRatio)
+            {
+                Debug.WriteLine("Same aspect ratio");
+                scaleFactor = (float)bitmap.Width / width;
+            }
+            else if(neededAspectRatio > imageAspectRatio)
+            {
+                Debug.WriteLine("Aspect ratio has more height");
+                scaleFactor = (float)bitmap.Width / width;
+                var newHeight = (int)(bitmap.Height / scaleFactor);
+                leftOffset = (height - newHeight) / 2;
+            }
+            else
+            {
+                Debug.WriteLine("Aspect ratio has more width");
+                scaleFactor = (float)bitmap.Height / height;
+                var newWidth = (int)(bitmap.Width / scaleFactor);
+                topOffset = (width - newWidth) / 2;
+            }
             bitmap.SetResolution(newBitmap.HorizontalResolution * scaleFactor, newBitmap.VerticalResolution * scaleFactor);
-            Debug.WriteLine("after SetResolution");
-            Debug.WriteLine(bitmap.Height);
-            //Debug.WriteLine(newBitmap.HorizontalResolution);
-            //Debug.WriteLine(bitmap.HorizontalResolution);
             canvas.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            canvas.DrawImage(bitmap, new Point(0, 0));
+            canvas.DrawImage(bitmap, new Point(topOffset, leftOffset));
             canvas.Save();
             var imageData = new MemoryStream();
             newBitmap.Save(imageData, ImageFormat.Jpeg);
