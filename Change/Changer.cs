@@ -45,16 +45,28 @@ namespace WallpaperChanger.Change
             if (newImages.Count > 0) screen.SetWpcImage(newImages[0]);
         }
 
-        public void ChangeAllWallpaper()
+        public void ChangeAllWallpaper(bool onlyBlack=false)
         {
             Debug.WriteLine("ChangeAllWallpaper");
-            List<WpcImage> newImages = imageContainer.getRandomImages(screens.Count, GetCurrentImages());
-            foreach(var screen in screens)
+            List<WpcImage> newImages = null;
+            if (onlyBlack) newImages = CreateBlackImages(screens.Count);
+            else newImages = imageContainer.getRandomImages(screens.Count, GetCurrentImages());
+            foreach (var screen in screens)
             {
                 if (newImages.Count <= 0) break;
                 screen.SetWpcImage(newImages[0]);
                 newImages.RemoveAt(0);
             }            
+        }
+
+        private List<WpcImage> CreateBlackImages(int amount)
+        {
+            List<WpcImage> blackImages = new List<WpcImage>();
+            for (int i = 0; i < amount; i++)
+            {
+                blackImages.Add(WpcImage.Black(10, 10));
+            }
+            return blackImages;
         }
 
         public void OpenGUI()

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using WallpaperChanger.Util;
 
 namespace WallpaperChanger.Shared
@@ -39,6 +40,24 @@ namespace WallpaperChanger.Shared
             if (extension == "jpg" || extension == "jpeg") return Type.JPG;
             else if (extension == "png") return Type.PNG;
             return Type.UNKNOWN;
+        }
+
+        public static WpcImage Black(int width, int height)
+        {
+            WpcImage image = new WpcImage();
+            Bitmap bitmap = new Bitmap(width, height);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    bitmap.SetPixel(x, y, System.Drawing.Color.Black);
+                }
+            }
+            image.size = new Size(width, height);
+            var imageData = new MemoryStream();
+            bitmap.Save(imageData, ImageFormat.Jpeg);
+            image.data = imageData.ToArray();
+            return image;
         }
 
         Type type;
