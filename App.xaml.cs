@@ -70,6 +70,7 @@ namespace WallpaperChanger
         {
             blackMode = true;
             changer.ChangeAllWallpaper(true);
+            changer.doChanges();
         }
 
         private void OnChangeAllClick(object sender, EventArgs eventArgs)
