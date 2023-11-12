@@ -27,6 +27,7 @@ namespace WallpaperChanger
         Persister persister;
         List<Shared.Screen> screens;
         bool running = false;
+        bool blackMode = false;
         Thread worker, tiWorker;
 
         public App()
@@ -67,11 +68,13 @@ namespace WallpaperChanger
 
         private void OnBlackModeClick(object sender, EventArgs eventArgs)
         {
+            blackMode = true;
             changer.ChangeAllWallpaper(true);
         }
 
         private void OnChangeAllClick(object sender, EventArgs eventArgs)
         {
+            blackMode = false;
             changer.ChangeAllWallpaper();
         }
 
@@ -111,7 +114,7 @@ namespace WallpaperChanger
             running = true;
             while(running)
             {
-                changer.doChanges();
+                if(!blackMode) changer.doChanges();
                 Thread.Sleep(1000);
             }
         }
