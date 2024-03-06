@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
@@ -112,12 +113,12 @@ namespace WallpaperChanger.Shared
             try
             {
                 File.Move(sourcePath, destPath);
+                Logger.Debug($"WpcImage({this}) Moved from {sourcePath} to {destPath}");
             } 
             catch (IOException ex)
             {
-                Debug.WriteLine("Guess already saved");
+                Logger.Debug($"WpcImage({this}) Error while moving from {sourcePath} to {destPath}. Guess it's already saved.");
             }
-            
         }
 
         public void save()
@@ -157,32 +158,33 @@ namespace WallpaperChanger.Shared
 
         public void Resize(int width, int height)
         {
+            Logger.Debug($"WpcImage({this}) Resize image to width: {width}; height: {height}");
             var bitmap = (Bitmap)asImage();
             if (bitmap == null) return;
             var newBitmap = new Bitmap(width, height);
             var canvas = Graphics.FromImage(newBitmap);
             var imageAspectRatio = ((float)bitmap.Width / bitmap.Height);
             var neededAspectRatio = ((float)width / height);
-            Debug.WriteLine("Image aspect ratio: " + imageAspectRatio);
-            Debug.WriteLine("Needed aspect ratio: " + neededAspectRatio);
+            Logger.Debug($"WpcImage({this}) Image aspect ratio: {imageAspectRatio}");
+            Logger.Debug($"WpcImage({this}) Needed aspect ratio: {neededAspectRatio}");
             var scaleFactor = 0f;
             var topOffset = 0;
             var leftOffset = 0;
             if (neededAspectRatio == imageAspectRatio)
             {
-                Debug.WriteLine("Same aspect ratio");
+                Logger.Debug($"WpcImage({this}) Same aspect ratio");
                 scaleFactor = (float)bitmap.Width / width;
             }
             else if(neededAspectRatio > imageAspectRatio)
             {
-                Debug.WriteLine("Aspect ratio has more height");
+                Logger.Debug($"WpcImage({this}) Aspect ratio has more height");
                 scaleFactor = (float)bitmap.Width / width;
                 var newHeight = (int)(bitmap.Height / scaleFactor);
                 leftOffset = (height - newHeight) / 2;
             }
             else
             {
-                Debug.WriteLine("Aspect ratio has more width");
+                Logger.Debug($"WpcImage({this}) Aspect ratio has more width");
                 scaleFactor = (float)bitmap.Height / height;
                 var newWidth = (int)(bitmap.Width / scaleFactor);
                 topOffset = (width - newWidth) / 2;

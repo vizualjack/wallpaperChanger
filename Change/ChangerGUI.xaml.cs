@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Drawing;
 using WallpaperChanger.Shared;
 using System.Diagnostics;
+using WallpaperChanger.Util;
 
 namespace WallpaperChanger.Change
 {
@@ -45,13 +46,13 @@ namespace WallpaperChanger.Change
                 screenGUIs.Add(screenGUI);
                 window.Children.Add(screenGUI);
                 left += (int)screenGUI.Width + SCREEN_MARGIN;
-                Debug.WriteLine(left);
             }
             left += SCREEN_MARGIN;
             Width = left;
             Height += screenGUIs[0].Height + Height;
             ResizeMode = ResizeMode.NoResize;
             settingsGUI = new SettingsGUI(changer);
+            Logger.Debug($"ChangerGUI {this} initialized. Width: {Width}; Height: {Height}");
         }
 
         private void OnChangeClicked(object? sender, EventArgs e)

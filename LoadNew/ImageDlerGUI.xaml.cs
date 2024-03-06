@@ -42,7 +42,7 @@ namespace WallpaperChanger.LoadNew
             loadedImages.AddRange(imageDler.downloadImages(IMAGE_LOADING_BATCH));
         }
 
-        private void CheckButtonStates()
+        private void UpdateButtonStates()
         {
             prev.IsEnabled = (imageIndex > 0);
             next.IsEnabled = (imageIndex < loadedImages.Count-1);
@@ -62,10 +62,10 @@ namespace WallpaperChanger.LoadNew
 
         private void AfterImageSwitch()
         {
-            CheckButtonStates();
+            UpdateButtonStates();
             ShowImage();
             var restImages = loadedImages.Count - imageIndex;
-            if(restImages < 5) { LoadNewImagesBackground(); }
+            if(restImages < 5) { LoadNewImagesInBackground(); }
         }
 
         private void ShowImage()
@@ -78,7 +78,7 @@ namespace WallpaperChanger.LoadNew
             return loadedImages[imageIndex];
         }
 
-        private void LoadNewImagesBackground()
+        private void LoadNewImagesInBackground()
         {
             if (bgLoader != null && bgLoader.IsAlive) return;
             bgLoader = new Thread(LoadNewImages);
@@ -101,7 +101,7 @@ namespace WallpaperChanger.LoadNew
             if (!IsVisible) return;
             if (loadedImages.Count == 0) LoadNewImages();
             ShowImage();
-            CheckButtonStates();
+            UpdateButtonStates();
         }
     }
 }

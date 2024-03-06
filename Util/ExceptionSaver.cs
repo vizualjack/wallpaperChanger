@@ -35,7 +35,7 @@ namespace WallpaperChanger.Util
             string logFileName = $"exception_{dateAsStr}.log";
             string logFilePath = Path.Combine(exceptionFolder, logFileName);
             FileUtil.SaveString(logFilePath, exceptionInfo);
-            Debug.Write(exceptionInfo);
+            Logger.Error(exceptionInfo);
             return logFilePath;
         }
     }

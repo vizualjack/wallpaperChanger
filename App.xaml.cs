@@ -32,11 +32,13 @@ namespace WallpaperChanger
 
         public App()
         {
+            Logger.logLevel = Logger.LogLevel.Debug;
             screens = new List<Shared.Screen>();
             foreach (var wScreen in System.Windows.Forms.Screen.AllScreens)
             {
-                screens.Add(new Shared.Screen(wScreen.Bounds.Width, wScreen.Bounds.Height));
+                screens.Add(new Shared.Screen(wScreen.Bounds.Width, wScreen.Bounds.Height));   
             }
+            Logger.Info($"Loaded {screens.Count} screens");
             persister = new Persister(WallpaperChanger.Resources.PERSISTER_PATH);
             imageContainer = new WpcImageContainer(WallpaperChanger.Resources.IMAGE_FOLDER);
             changer = new Changer(imageContainer, screens);

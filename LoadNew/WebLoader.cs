@@ -100,10 +100,6 @@ namespace WallpaperChanger.LoadNew
         {
             var res = Request(uri);
             return GetBytesFromResponse(res);
-            //HttpClient client = new HttpClient();
-            //var task = client.GetByteArrayAsync(uri);
-            //task.Wait();
-            //return task.Result;
         }
 
         private static byte[] GetBytesFromResponse(HttpResponseMessage response)
@@ -119,66 +115,6 @@ namespace WallpaperChanger.LoadNew
             var t = uri.GetStringAsync();
             t.Wait();
             return t.Result;
-
-            //var c = new HttpClient();
-            //var t = c.GetStringAsync(uri);
-            //t.Wait();
-            //return t.Result;
-
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            //request.Method = "GET";
-
-            //foreach (var key in request.Headers.AllKeys)
-            //{
-            //    Debug.WriteLine($"{key}: {request.Headers[key]}");
-            //}
-
-            //Debug.WriteLine($"=================");
-
-            //var t = request.GetResponseAsync();
-            //t.Wait();
-            //HttpWebResponse response = (HttpWebResponse)t.Result;
-            //foreach( var key in response.Headers.AllKeys )
-            //{
-            //    Debug.WriteLine($"{key}: {response.Headers[key]}");
-            //}
-            //Stream stream = response.GetResponseStream();
-            //StreamReader reader = new StreamReader(stream);
-            //var res = "";
-            //var buffer = "";
-            //do
-            //{
-            //    buffer = reader.ReadToEnd();
-            //    res += buffer;
-            //} while(buffer.Length > 0);
-            //return reader.ReadToEnd();
-
-            ////Debug.WriteLine("====== Load String ======");
-            //var res = Request(uri);
-            //Debug.WriteLine($"Uri: {uri}");
-            //Debug.WriteLine($"StatusCode: {res.StatusCode}");
-            //Debug.WriteLine($"Length: {res.Content.ReadAsStream().Length}");
-            //Debug.WriteLine($"Headers");
-            //foreach (var header in res.Headers)
-            //{
-            //    Debug.WriteLine($"\t {header.Key}");
-            //    foreach (var value in header.Value)
-            //    {
-            //        Debug.WriteLine($"\t\t {value}");
-            //    }
-            //}
-            //Debug.WriteLine("=========================");
-            ////var bytes = GetBytesFromResponse(res);
-            //var str = GetStringFromResponse(res);
-            //FileUtil.SaveString("responseStr", str);
-            //return str;
-            //FileUtil.SaveBytes("response", Encoding.UTF8.GetBytes(str));
-
-            //var client = new HttpClient();
-            //var task = client.GetStringAsync(uri);
-            //task.Wait();
-            //FileUtil.SaveString("responseStr", task.Result);
-            //return task.Result;
         }
 
         private static string GetStringFromResponse(HttpResponseMessage response)
@@ -186,10 +122,6 @@ namespace WallpaperChanger.LoadNew
             var task = response.Content.ReadAsStringAsync();
             task.Wait();
             return task.Result;
-            //var reader = new StreamReader(response.Content.ReadAsStream());
-            //var result = reader.ReadToEnd();
-            //var data = Encoding.UTF8.GetBytes(result);
-            //return result;
         }
 
         private static HttpResponseMessage Request(string uriString)
@@ -202,32 +134,6 @@ namespace WallpaperChanger.LoadNew
             var task = client.SendAsync(req, HttpCompletionOption.ResponseContentRead);
             task.Wait();
             return task.Result;
-
-
-            ////req.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
-            ////req.Headers.Add("Accept-Encoding", "gzip, deflate, br
-            ////req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
-            //Debug.WriteLine("== Request ==");
-            //var acceptEncoding = "";
-            //foreach (var header in req.Headers.AcceptEncoding)
-            //{
-            //    acceptEncoding += $"{header.Value}, ";
-            //}
-            //Debug.WriteLine($"acceptEncoding: {acceptEncoding}");
-            //Debug.WriteLine($"Headers");
-            //foreach (var header in req.Headers)
-            //{
-            //    Debug.WriteLine($"\t {header.Key}");
-            //    foreach (var value in header.Value)
-            //    {
-            //        Debug.WriteLine($"\t\t {value}");
-            //    }
-            //}
-            //Debug.WriteLine("==============");
-            ////var res = client.Send(req);
-            //var task = client.GetAsync(uri);
-            //task.Wait();
-            //return task.Result;
         }
     }
 }

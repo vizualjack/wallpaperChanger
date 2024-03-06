@@ -47,8 +47,7 @@ namespace WallpaperChanger.Change
 
         public void ChangeAllWallpaper(bool onlyBlack=false)
         {
-            Debug.WriteLine("ChangeAllWallpaper");
-            List<WpcImage> newImages = null;
+            List<WpcImage> newImages;
             if (onlyBlack) newImages = CreateBlackImages(screens.Count);
             else newImages = imageContainer.getRandomImages(screens.Count, GetCurrentImages());
             foreach (var screen in screens)
@@ -56,7 +55,8 @@ namespace WallpaperChanger.Change
                 if (newImages.Count <= 0) break;
                 screen.SetWpcImage(newImages[0]);
                 newImages.RemoveAt(0);
-            }            
+            }
+            Logger.Debug($"Changed all wallpapers. onlyBlack: {onlyBlack}");
         }
 
         private List<WpcImage> CreateBlackImages(int amount)
