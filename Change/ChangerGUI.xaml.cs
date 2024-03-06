@@ -52,7 +52,7 @@ namespace WallpaperChanger.Change
             Height += screenGUIs[0].Height + Height;
             ResizeMode = ResizeMode.NoResize;
             settingsGUI = new SettingsGUI(changer);
-            Logger.Debug($"ChangerGUI {this} initialized. Width: {Width}; Height: {Height}");
+            Logger.Debug(this, $"initialized. Width: {Width}; Height: {Height}");
         }
 
         private void OnChangeClicked(object? sender, EventArgs e)

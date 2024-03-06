@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+//using System.Windows;
 using System.Windows.Forms;
 using WallpaperChanger.Change;
 using WallpaperChanger.LoadNew;
@@ -23,7 +23,7 @@ namespace WallpaperChanger
         System.Windows.Forms.NotifyIcon trayIcon;
         WpcImageContainer imageContainer;
         Changer changer;
-        ImageDler imageDler;
+        ImageDler? imageDler;
         Persister persister;
         List<Shared.Screen> screens;
         bool running = false;
@@ -38,14 +38,18 @@ namespace WallpaperChanger
             {
                 screens.Add(new Shared.Screen(wScreen.Bounds.Width, wScreen.Bounds.Height));   
             }
-            Logger.Info($"Loaded {screens.Count} screens");
+            Logger.Info(this, $"Loaded {screens.Count} screens");
             persister = new Persister(WallpaperChanger.Resources.PERSISTER_PATH);
             imageContainer = new WpcImageContainer(WallpaperChanger.Resources.IMAGE_FOLDER);
             changer = new Changer(imageContainer, screens);
-            var screen = screens[0];
-            imageDler = new ImageDler(imageContainer, new WpcImage.Size(screen.width, screen.height));
             persister.Load(changer);
-            persister.Load(imageDler);
+            var screen = screens[0];
+            try
+            {
+                imageDler = new ImageDler(imageContainer, new WpcImage.Size(screen.width, screen.height));
+                persister.Load(imageDler);
+            }
+            catch { Logger.Info(this, $"No images for this screen size, imageDler disabled. Width: {screen.width} Height: {screen.height}"); }
             TrayIcon();
             StartMainLoop();
         }
@@ -88,7 +92,12 @@ namespace WallpaperChanger
 
         private void OnNewImagesClick(object sender, EventArgs eventArgs)
         {
-            imageDler.OpenGUI();
+            if (imageDler != null)
+            {
+                imageDler.OpenGUI();
+                return;
+            }
+            MessageBox.Show("There are no images for your screen size", "WallpaperChanger");
         }
 
         private void OnOpenImagesClick(object sender, EventArgs eventArgs)

@@ -113,11 +113,11 @@ namespace WallpaperChanger.Shared
             try
             {
                 File.Move(sourcePath, destPath);
-                Logger.Debug($"WpcImage({this}) Moved from {sourcePath} to {destPath}");
+                Logger.Debug(this, $"Moved from {sourcePath} to {destPath}");
             } 
             catch (IOException ex)
             {
-                Logger.Debug($"WpcImage({this}) Error while moving from {sourcePath} to {destPath}. Guess it's already saved.");
+                Logger.Debug(this, $"Error while moving from {sourcePath} to {destPath}. Guess it's already saved.");
             }
         }
 
@@ -158,33 +158,33 @@ namespace WallpaperChanger.Shared
 
         public void Resize(int width, int height)
         {
-            Logger.Debug($"WpcImage({this}) Resize image to width: {width}; height: {height}");
+            Logger.Debug(this, $"Resize image to width: {width}; height: {height}");
             var bitmap = (Bitmap)asImage();
             if (bitmap == null) return;
             var newBitmap = new Bitmap(width, height);
             var canvas = Graphics.FromImage(newBitmap);
             var imageAspectRatio = ((float)bitmap.Width / bitmap.Height);
             var neededAspectRatio = ((float)width / height);
-            Logger.Debug($"WpcImage({this}) Image aspect ratio: {imageAspectRatio}");
-            Logger.Debug($"WpcImage({this}) Needed aspect ratio: {neededAspectRatio}");
+            Logger.Debug(this, $"Image aspect ratio: {imageAspectRatio}");
+            Logger.Debug(this, $"Needed aspect ratio: {neededAspectRatio}");
             var scaleFactor = 0f;
             var topOffset = 0;
             var leftOffset = 0;
             if (neededAspectRatio == imageAspectRatio)
             {
-                Logger.Debug($"WpcImage({this}) Same aspect ratio");
+                Logger.Debug(this, "Same aspect ratio");
                 scaleFactor = (float)bitmap.Width / width;
             }
             else if(neededAspectRatio > imageAspectRatio)
             {
-                Logger.Debug($"WpcImage({this}) Aspect ratio has more height");
+                Logger.Debug(this, "Aspect ratio has more height");
                 scaleFactor = (float)bitmap.Width / width;
                 var newHeight = (int)(bitmap.Height / scaleFactor);
                 leftOffset = (height - newHeight) / 2;
             }
             else
             {
-                Logger.Debug($"WpcImage({this}) Aspect ratio has more width");
+                Logger.Debug(this, "Aspect ratio has more width");
                 scaleFactor = (float)bitmap.Height / height;
                 var newWidth = (int)(bitmap.Width / scaleFactor);
                 topOffset = (width - newWidth) / 2;
@@ -197,16 +197,6 @@ namespace WallpaperChanger.Shared
             newBitmap.Save(imageData, ImageFormat.Jpeg);
             size = new Size(width, height);
             data = imageData.ToArray();
-        }
-
-        override public string ToString()
-        {
-            string toString = "name: " + this.name + "\n";
-            toString += "extension: " + this.extension + "\n";
-            toString += "saveFolder: " + this.saveFolder + "\n";
-            toString += "type: " + this.type.ToString() + "\n";
-            if (size != null) { toString += "size: " + this.size.ToString() + "\n"; }
-            return toString;
         }
     }
 }

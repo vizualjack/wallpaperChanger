@@ -19,7 +19,7 @@ namespace WallpaperChanger.Shared
             this.width = width;
             this.height = height;
             hasChanged = false;
-            Logger.Debug($"Screen {this} inititalized. Width: {width}; Height: {height}");
+            Logger.Debug(this, $"inititalized. Width: {width}; Height: {height}");
         }
 
         public Screen(int width, int height, WpcImage wpcImage) : this(width, height)
@@ -32,7 +32,7 @@ namespace WallpaperChanger.Shared
             wpcImage = newWpcImage;
             wpcImage.Resize(this.width, this.height);
             hasChanged = true;
-            Logger.Debug($"Screen {this} got new image");
+            Logger.Debug(this, $"got new image");
         }
 
         public bool HasChanged() { return hasChanged; }

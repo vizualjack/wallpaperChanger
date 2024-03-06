@@ -56,7 +56,7 @@ namespace WallpaperChanger.Change
                 screen.SetWpcImage(newImages[0]);
                 newImages.RemoveAt(0);
             }
-            Logger.Debug($"Changed all wallpapers. onlyBlack: {onlyBlack}");
+            Logger.Debug(this, $"Changed all wallpapers. onlyBlack: {onlyBlack}");
         }
 
         private List<WpcImage> CreateBlackImages(int amount)
