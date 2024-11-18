@@ -14,12 +14,15 @@ using WallpaperChanger.Util;
 
 namespace WallpaperChanger
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : System.Windows.Application
     {
-        System.Windows.Forms.NotifyIcon trayIcon;
+#if DEBUG
+        public static Logger.LogLevel LOGLEVEL = Logger.LogLevel.Debug;
+#else
+        public static Logger.LogLevel LOGLEVEL = Logger.LogLevel.Error;
+#endif
+
+        NotifyIcon trayIcon;
         WpcImageContainer imageContainer;
         Changer changer;
         ImageDler? imageDler;
@@ -31,13 +34,8 @@ namespace WallpaperChanger
 
         public App()
         {
-            Logger.logLevel = Logger.LogLevel.Debug;
-            screens = new List<Shared.Screen>();
-            foreach (var wScreen in System.Windows.Forms.Screen.AllScreens)
-            {
-                screens.Add(new Shared.Screen(wScreen.Bounds.Width, wScreen.Bounds.Height));   
-            }
-            Logger.Info(this, $"Loaded {screens.Count} screens");
+            Logger.logLevel = LOGLEVEL;
+            LoadScreens();
             persister = new Persister(WallpaperChanger.Resources.PERSISTER_PATH);
             imageContainer = new WpcImageContainer(WallpaperChanger.Resources.IMAGE_FOLDER);
             changer = new Changer(imageContainer, screens);
@@ -51,6 +49,16 @@ namespace WallpaperChanger
             catch { Logger.Info(this, $"No images for this screen size, imageDler disabled. Width: {screen.width} Height: {screen.height}"); }
             TrayIcon();
             StartMainLoop();
+        }
+
+        private void LoadScreens()
+        {
+            screens = new List<Shared.Screen>();
+            foreach (var wScreen in System.Windows.Forms.Screen.AllScreens)
+            {
+                screens.Add(new Shared.Screen(wScreen.Bounds.Width, wScreen.Bounds.Height));
+            }
+            Logger.Info(this, $"Loaded {screens.Count} screens");
         }
 
         private void TrayIcon()

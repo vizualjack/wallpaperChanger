@@ -117,7 +117,7 @@ namespace WallpaperChanger.Shared
             } 
             catch (IOException ex)
             {
-                Logger.Debug(this, $"Error while moving from {sourcePath} to {destPath}. Guess it's already saved.");
+                Logger.Debug(this, $"Error while moving from {sourcePath} to {destPath}.");
             }
         }
 

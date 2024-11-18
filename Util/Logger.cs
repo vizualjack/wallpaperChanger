@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace WallpaperChanger.Util
 {
-    class Logger
+    public class Logger
     {
         public enum LogLevel { Debug, Info, Error}
-        public static LogLevel logLevel = LogLevel.Error;
+        public static LogLevel logLevel = LogLevel.Info;
 
         public static void Debug(string message) { if(logLevel <= LogLevel.Debug) Print(LogLevel.Debug, message); }
         public static void Info(string message) { if (logLevel <= LogLevel.Info) Print(LogLevel.Info, message); }
