@@ -84,7 +84,11 @@ namespace WallpaperChanger.Change
         public void doChanges()
         {
             var nextChangeTime = lastChangeTime.AddSeconds(changeInterval);
-            if(nextChangeTime.CompareTo(DateTime.Now) <= 0) ChangeAllWallpaper();
+            if (nextChangeTime.CompareTo(DateTime.Now) <= 0)
+            {
+                ChangeAllWallpaper();
+                lastChangeTime = DateTime.Now;
+            }
             bool wpChanged = false;
             foreach(var screen in screens)
             {
@@ -98,7 +102,6 @@ namespace WallpaperChanger.Change
                 {
                     gui.RefreshAllImages();
                 }
-                lastChangeTime = DateTime.Now;
             }
         }
 

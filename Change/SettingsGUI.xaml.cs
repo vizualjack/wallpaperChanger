@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WallpaperChanger.Util;
 
 namespace WallpaperChanger.Change
 {
@@ -25,7 +26,6 @@ namespace WallpaperChanger.Change
         {
             InitializeComponent();
             this.changer = changer;
-            changeInterval.Text = changer.changeInterval.ToString();
         }
 
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -44,6 +44,11 @@ namespace WallpaperChanger.Change
         {
             e.Cancel = true;
             Hide();
+        }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            changeInterval.Text = changer.changeInterval.ToString();
         }
     }
 }

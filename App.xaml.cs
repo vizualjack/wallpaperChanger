@@ -47,7 +47,7 @@ namespace WallpaperChanger
                 persister.Load(imageDler);
             }
             catch { Logger.Info(this, $"No images for this screen size, imageDler disabled. Width: {screen.width} Height: {screen.height}"); }
-            TrayIcon();
+            InitTrayIcon();
             StartMainLoop();
         }
 
@@ -61,7 +61,7 @@ namespace WallpaperChanger
             Logger.Info(this, $"Loaded {screens.Count} screens");
         }
 
-        private void TrayIcon()
+        private void InitTrayIcon()
         {
             var menu = new System.Windows.Forms.ContextMenuStrip();
             menu.Items.Add("Open", null, new EventHandler(OnOpenClick));
@@ -73,6 +73,7 @@ namespace WallpaperChanger
             trayIcon = new System.Windows.Forms.NotifyIcon()
             {
                 Icon = WallpaperChanger.Resources.AppIcon,
+                Text = "Wallpaper Changer",
                 ContextMenuStrip = menu,
                 Visible = true
             };
@@ -99,12 +100,8 @@ namespace WallpaperChanger
 
         private void OnNewImagesClick(object sender, EventArgs eventArgs)
         {
-            if (imageDler != null)
-            {
-                imageDler.OpenGUI();
-                return;
-            }
-            MessageBox.Show("There are no images for your screen size", "WallpaperChanger");
+            if (imageDler != null) imageDler.OpenGUI();
+            else MessageBox.Show("There are no images for your screen size", "WallpaperChanger");
         }
 
         private void OnOpenImagesClick(object sender, EventArgs eventArgs)
@@ -117,7 +114,7 @@ namespace WallpaperChanger
             running = false;
             worker.Join();
             persister.AddForSave(changer);
-            persister.AddForSave(imageDler);
+            if(imageDler != null) persister.AddForSave(imageDler);
             persister.Save();
             Shutdown();
         }
