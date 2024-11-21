@@ -34,23 +34,13 @@ namespace WallpaperChanger.Change
             InitializeComponent();
             this.changer = changer;
             screenGUIs = new List<ScreenGUI>();
-            var left = SCREEN_MARGIN;
             foreach(var screen in changer.screens)
             {
                 var screenGUI = new ScreenGUI(screen);
-                Thickness margin;
-                margin.Top = Height;
-                margin.Left = left;
-                screenGUI.Margin = margin;
                 screenGUI.ChangeClicked += OnChangeClicked;
                 screenGUIs.Add(screenGUI);
-                window.Children.Add(screenGUI);
-                left += (int)screenGUI.Width + SCREEN_MARGIN;
+                screens.Children.Add(screenGUI);
             }
-            left += SCREEN_MARGIN;
-            Width = left;
-            Height += screenGUIs[0].Height + Height;
-            ResizeMode = ResizeMode.NoResize;
             settingsGUI = new SettingsGUI(changer);
             Logger.Debug(this, $"initialized. Width: {Width}; Height: {Height}");
         }

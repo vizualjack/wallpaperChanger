@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WallpaperChanger.Change"
         mc:Ignorable="d"
-        Title="Wallpaper Changer - Settings" Height="110" Width="250" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="Wallpaper Changer - Settings" Height="110" Width="250" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="Window_Closing" SourceInitialized="Window_SourceInitialized">
     <Grid>
         <Label Content="Change Interval (Secs):" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="26"/>
         <TextBox x:Name="changeInterval" HorizontalAlignment="Left" Margin="144,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60" PreviewTextInput="TextBox_PreviewTextInput"/>

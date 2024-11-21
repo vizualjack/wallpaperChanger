@@ -5,9 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WallpaperChanger.Change"
         mc:Ignorable="d"
-        Title="Wallpaper Changer" Height="60" Width="800" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="Wallpaper Changer" Height="500" Width="800" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid x:Name="window">
-        <Button x:Name="changeAll" Content="Change all" HorizontalAlignment="Center" Margin="0,22,0,0" VerticalAlignment="Top" Click="changeAll_Click"/>
-        <Button x:Name="settings" Content="Settings" HorizontalAlignment="Right" Margin="0,22,22,0" VerticalAlignment="Top" Click="settings_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="5,10,5,10">
+            <Button x:Name="changeAll" Content="Change all" HorizontalAlignment="Center" VerticalAlignment="Top" Click="changeAll_Click"/>
+            <Button x:Name="settings" Content="Settings" HorizontalAlignment="Right" VerticalAlignment="Top" Click="settings_Click"/>
+        </Grid>
+        <UniformGrid Rows="1" Grid.Row="1" x:Name="screens"/>
     </Grid>
 </Window>
