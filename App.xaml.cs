@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace WallpaperChanger
         public static Logger.LogLevel LOGLEVEL = Logger.LogLevel.Error;
 #endif
 
+        private static Mutex mutex;
+
         NotifyIcon trayIcon;
         WpcImageContainer imageContainer;
         Changer changer;
@@ -34,6 +37,12 @@ namespace WallpaperChanger
 
         public App()
         {
+            if (AppIsAlreadyRunning())
+            {
+                MessageBox.Show("An instance of the application is already running.");
+                Shutdown();
+                return;
+            }
             Logger.logLevel = LOGLEVEL;
             LoadScreens();
             persister = new Persister(WallpaperChanger.Resources.PERSISTER_PATH);
@@ -49,6 +58,13 @@ namespace WallpaperChanger
             catch { Logger.Info(this, $"No images for this screen size, imageDler disabled. Width: {screen.width} Height: {screen.height}"); }
             InitTrayIcon();
             StartMainLoop();
+        }
+
+        private bool AppIsAlreadyRunning()
+        {
+            bool isNewInstance;
+            mutex = new Mutex(true, "askdas--wadawdwwwAAWD-DDDWASDAWLDAWDL-wwsdadaogkedopgk", out isNewInstance);
+            return !isNewInstance;
         }
 
         private void LoadScreens()

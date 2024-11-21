@@ -15,7 +15,7 @@ namespace WallpaperChanger.LoadNew
     {
 
         private static string DOMAIN = "https://wallpaperscraft.com";
-        private static string WALLPAPER_CATALOG_PAGE = $"{DOMAIN}/catalog/anime/";
+        private static string WALLPAPER_CATALOG_PAGE = $"{DOMAIN}/catalog/all/";
 
         WpcImageContainer imageContainer;
         WpcImage.Size size;
