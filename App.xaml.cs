@@ -34,12 +34,13 @@ namespace WallpaperChanger
         bool running = false;
         bool blackMode = false;
         Thread worker, tiWorker;
+        ToolStripItem blackModeItem;
 
         public App()
         {
             if (AppIsAlreadyRunning())
             {
-                MessageBox.Show("An instance of the application is already running.");
+                MessageBox.Show("An instance of the application is already running.", "WallpaperChanger");
                 Shutdown();
                 return;
             }
@@ -82,7 +83,7 @@ namespace WallpaperChanger
             var menu = new System.Windows.Forms.ContextMenuStrip();
             menu.Items.Add("Open", null, new EventHandler(OnOpenClick));
             menu.Items.Add("Change All", null, new EventHandler(OnChangeAllClick));
-            menu.Items.Add("Black mode", null, new EventHandler(OnBlackModeClick));
+            blackModeItem = menu.Items.Add(GetBlackModeItemText(), null, new EventHandler(OnBlackModeClick));
             menu.Items.Add("New images", null, new EventHandler(OnNewImagesClick));
             menu.Items.Add("Open images folder", null, new EventHandler(OnOpenImagesClick));
             menu.Items.Add("Close", null, new EventHandler(OnCloseClick));
@@ -96,17 +97,23 @@ namespace WallpaperChanger
             trayIcon.DoubleClick += OnOpenClick;
         }
 
+        private string GetBlackModeItemText()
+        {
+            return $"Black mode ({(blackMode ? "Active" : "Inactive")})";
+        }
+
         private void OnBlackModeClick(object sender, EventArgs eventArgs)
         {
-            blackMode = true;
-            changer.ChangeAllWallpaper(true);
+            blackMode = !blackMode;
+            blackModeItem.Text = GetBlackModeItemText();
+            changer.ChangeAllWallpaper(blackMode);
             changer.doChanges();
         }
 
         private void OnChangeAllClick(object sender, EventArgs eventArgs)
         {
-            blackMode = false;
             changer.ChangeAllWallpaper();
+            changer.doChanges();
         }
 
         private void OnOpenClick(object sender, EventArgs eventArgs)
